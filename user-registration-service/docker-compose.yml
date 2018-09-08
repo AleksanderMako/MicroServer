@@ -1,0 +1,31 @@
+version: "3"
+services:
+  api:
+    container_name: "user-registration-service"
+    build: .
+    working_dir: /app
+    volumes: 
+      - .:/app
+    ports: 
+      - 3000:3000
+    command: bash -c "sleep 5 && npm start"
+    networks: 
+       - ovl_net
+    depends_on:
+      - mongo
+  mongo:
+    container_name: mongoDB
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks: 
+       - ovl_net
+
+networks:
+  ovl_net:
+    external:
+      name: airline_service
+
+  

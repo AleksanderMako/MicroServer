@@ -1,0 +1,33 @@
+{
+  "name": "Inf-Senior-Project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && node dist/mongoose.connect.js",
+    "build": "npm run tslint && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tslint": "tslint -c tslint.json -p tsconfig.json --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amako1997/Inf-Senior-Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amako1997/Inf-Senior-Project/issues"
+  },
+  "homepage": "https://github.com/amako1997/Inf-Senior-Project#readme",
+  "dependencies": {
+    "mongoose": "^5.2.13",
+    "tsc": "^1.20150623.0",
+    "tslint": "5.11.0"
+  },
+  "devDependencies": {
+    "@types/mongodb": "^3.1.4",
+    "@types/mongoose": "^5.2.11",
+    "typescript": "3.0.3"
+  }
+}
