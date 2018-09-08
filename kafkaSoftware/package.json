@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/amako1997/Inf-Senior-Project#readme",
   "dependencies": {
-    "kafka-node": "3.0.0",
     "mongoose": "^5.2.13",
     "tsc": "^1.20150623.0",
     "tslint": "5.11.0"
