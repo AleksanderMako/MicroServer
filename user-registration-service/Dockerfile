@@ -6,7 +6,7 @@ WORKDIR /app
 RUN npm set progress=false
 
 COPY package.json /app
-
+RUN export DEBUG=kafka-node:*
 RUN npm install --verbose 
 #RUN npm install typescript 
 

@@ -27,7 +27,7 @@
       "no-var-keyword": true,
       "max-line-length": [
         true,
-        140
+        200
       ],
       "quotemark": [
         true,

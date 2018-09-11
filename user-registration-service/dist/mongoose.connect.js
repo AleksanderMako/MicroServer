@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const userCrud_1 = require("./user.service.ts/userCrud");
 const payload_1 = require("./payload");
+const producer_1 = require("./kafkaSoftware/producer");
 const initCrudService = (connection) => {
     const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
     const userService = new userCrud_1.default(payload, connection);
@@ -26,5 +27,13 @@ const connect = () => __awaiter(this, void 0, void 0, function* () {
         console.log(err);
     }
 });
-connect();
+const startKafka = () => __awaiter(this, void 0, void 0, function* () {
+    const producer = new producer_1.TestProducer();
+    producer.start(100);
+    // const emitter = new EventEmitter();
+    // emitter.setMaxListeners(30);
+    // const consumer = new TestConsumer("id1", "g3");
+});
+startKafka();
+// connect();
 //# sourceMappingURL=mongoose.connect.js.map
