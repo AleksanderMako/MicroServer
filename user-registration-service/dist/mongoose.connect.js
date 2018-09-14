@@ -13,30 +13,34 @@ const userCrud_1 = require("./user.service.ts/userCrud");
 const payload_1 = require("./payload");
 const consumer_1 = require("./kafkaSoftware/consumer");
 const producer_1 = require("./kafkaSoftware/producer");
-const initCrudService = (connection) => {
-    const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
+const kafkaManager_1 = require("./kafkaSoftware/kafkaservices/kafkaManager");
+const initCrudService = (connection, payload) => {
     const userService = new userCrud_1.default(payload, connection);
     userService.init();
 };
-const connect = () => __awaiter(this, void 0, void 0, function* () {
+const connect = (data) => __awaiter(this, void 0, void 0, function* () {
     try {
         const db = yield mongoose.connect("mongodb://mongoDB:27017/user");
-        initCrudService(db);
+        initCrudService(db, data);
         console.log("Connected");
     }
     catch (err) {
         console.log(err);
     }
 });
-const startKafkaConsumer = () => __awaiter(this, void 0, void 0, function* () {
-    const consumer = new consumer_1.TestConsumer("id1", "g3");
+const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
+    const manager = new kafkaManager_1.default();
+    const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
+    manager.setProducer(new producer_1.TestProducer());
+    manager.setConsumer(new consumer_1.TestConsumer());
+    const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
+    yield manager.publishMessage("userCrud", payload);
+    yield manager.startConsumer(consumer);
+    const message = manager.getMessage();
+    console.log(message);
+    console.log("\n");
+    connect(message);
 });
-const startKafkaPriducer = () => __awaiter(this, void 0, void 0, function* () {
-    const producer = new producer_1.TestProducer("userCrud", new payload_1.default("create", { firstname: "Alex", lastName: "kafkaMan" }));
-    producer.start(10);
-    // const consumer = new TestConsumer("id1", "g3");
-});
-startKafkaPriducer();
-startKafkaConsumer();
+kafkaManger();
 // connect();
 //# sourceMappingURL=mongoose.connect.js.map

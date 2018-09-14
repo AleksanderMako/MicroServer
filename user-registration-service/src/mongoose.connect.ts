@@ -4,19 +4,19 @@ import Payload from "./payload";
 import { Producer } from "kafka-node";
 import { TestConsumer } from "./kafkaSoftware/consumer";
 import { TestProducer } from "./kafkaSoftware/producer";
+import KafkaManager from "./kafkaSoftware/kafkaservices/kafkaManager";
 
-const initCrudService = (connection: any) => {
+const initCrudService = (connection: any, payload: Payload) => {
 
-    const payload = Payload.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
     const userService = new UserCrud(payload, connection);
     userService.init();
 };
 
-const connect = async () => {
+const connect = async (data: any) => {
     try {
 
         const db = await mongoose.connect("mongodb://mongoDB:27017/user", );
-        initCrudService(db);
+        initCrudService(db, data);
         console.log("Connected");
 
 
@@ -25,19 +25,22 @@ const connect = async () => {
         console.log(err);
     }
 };
-const startKafkaConsumer = async () => {
+const kafkaManger = async () => {
+    const manager = new KafkaManager();
+    const payload = Payload.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
+    manager.setProducer(new TestProducer());
+    manager.setConsumer(new TestConsumer());
+    const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
+    await manager.publishMessage("userCrud", payload);
+    await manager.startConsumer(consumer);
+    const message = manager.getMessage();
+    console.log(message);
+    console.log("\n");
 
-    const consumer = new TestConsumer("id1", "g3");
-
+    connect(message);
 };
-const startKafkaPriducer = async () => {
 
-    const producer = new TestProducer("userCrud", new Payload("create", { firstname: "Alex", lastName: "kafkaMan" }));
-    producer.start(10);
-    // const consumer = new TestConsumer("id1", "g3");
-};
-startKafkaPriducer();
-startKafkaConsumer();
+kafkaManger();
 
 // connect();
 
