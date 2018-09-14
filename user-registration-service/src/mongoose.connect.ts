@@ -25,16 +25,19 @@ const connect = async () => {
         console.log(err);
     }
 };
+const startKafkaConsumer = async () => {
 
-const startKafka = async () => {
+    const consumer = new TestConsumer("id1", "g3");
 
-    const producer = new TestProducer();
-    producer.start(100);
-    // const emitter = new EventEmitter();
-    // emitter.setMaxListeners(30);
-   // const consumer = new TestConsumer("id1", "g3");
 };
-startKafka();
+const startKafkaPriducer = async () => {
+
+    const producer = new TestProducer("userCrud", new Payload("create", { firstname: "Alex", lastName: "kafkaMan" }));
+    producer.start(10);
+    // const consumer = new TestConsumer("id1", "g3");
+};
+startKafkaPriducer();
+startKafkaConsumer();
 
 // connect();
 
