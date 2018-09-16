@@ -45,7 +45,7 @@ export class TestConsumer {
         const data = message.value;
 
         const dt = JSON.parse(data.toString());
-        console.log(typeof dt);
+       /// console.log(typeof dt);
         console.log("\n");
 
         // console.log(dt);

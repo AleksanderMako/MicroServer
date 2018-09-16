@@ -15,16 +15,19 @@ const consumer_1 = require("./kafkaSoftware/consumer");
 const producer_1 = require("./kafkaSoftware/producer");
 const kafkaManager_1 = require("./kafkaSoftware/kafkaservices/kafkaManager");
 const schema = require("./schemas/userSchema");
+const userRepository_1 = require("./repository/userRepository");
+let db;
 let userSchema;
+let userRepositoryObject;
 const initCrudService = (connection, payload) => {
-    const userService = new userCrud_1.default(payload, connection, userSchema);
+    const userService = new userCrud_1.default(payload, userRepositoryObject);
     userService.init();
 };
-let db;
 const connect = () => __awaiter(this, void 0, void 0, function* () {
     try {
         userSchema = schema.makeUserSchema();
         db = yield mongoose.connect("mongodb://mongoDB:27017/user");
+        userRepositoryObject = new userRepository_1.default(db, userSchema);
         console.log("Connected");
     }
     catch (err) {
@@ -33,19 +36,20 @@ const connect = () => __awaiter(this, void 0, void 0, function* () {
 });
 const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
     connect();
+    const arr = ["", "create", "read"];
     const manager = new kafkaManager_1.default();
     manager.setProducer(new producer_1.TestProducer());
     manager.setConsumer(new consumer_1.TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
     let i = 0;
     while (i < 10) {
-        const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
+        const payload = payload_1.default.getPayload(arr[i % 3], { firstname: "hi", lastName: "there", age: 18 });
         yield manager.publishMessage("userCrud", payload);
         yield manager.startConsumer(consumer);
         const message = manager.getMessage();
-        console.log("******************************************************");
-        console.log(message);
-        console.log("*******************************************************");
+        // console.log("******************************************************");
+        // console.log(message);
+        // console.log("*******************************************************");
         console.log("\n");
         initCrudService(db, message);
         i++;

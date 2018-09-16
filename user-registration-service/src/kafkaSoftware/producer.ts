@@ -21,10 +21,10 @@ export class TestProducer {
     }
 
     public async start(topic: string, message: Payload) {
-        console.log("DEBUG: ENTERED START METHOD ");
+       // console.log("DEBUG: ENTERED START METHOD ");
         console.log("\n");
         this.buffMessage = JSON.stringify(message);
-        console.log(this.buffMessage);
+      ///  console.log(this.buffMessage);
         this.topic = topic;
         let messageCounter = 0;
         try {
@@ -36,7 +36,7 @@ export class TestProducer {
                 // key: (i % 3).toString()
             }];
 
-            console.log("DEBUG: made the payload  ");
+           // console.log("DEBUG: made the payload  ");
             console.log("\n");
 
 
