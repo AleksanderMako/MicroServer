@@ -14,14 +14,17 @@ const payload_1 = require("./payload");
 const consumer_1 = require("./kafkaSoftware/consumer");
 const producer_1 = require("./kafkaSoftware/producer");
 const kafkaManager_1 = require("./kafkaSoftware/kafkaservices/kafkaManager");
+const schema = require("./schemas/userSchema");
+let userSchema;
 const initCrudService = (connection, payload) => {
-    const userService = new userCrud_1.default(payload, connection);
+    const userService = new userCrud_1.default(payload, connection, userSchema);
     userService.init();
 };
-const connect = (data) => __awaiter(this, void 0, void 0, function* () {
+let db;
+const connect = () => __awaiter(this, void 0, void 0, function* () {
     try {
-        const db = yield mongoose.connect("mongodb://mongoDB:27017/user");
-        initCrudService(db, data);
+        userSchema = schema.makeUserSchema();
+        db = yield mongoose.connect("mongodb://mongoDB:27017/user");
         console.log("Connected");
     }
     catch (err) {
@@ -29,19 +32,24 @@ const connect = (data) => __awaiter(this, void 0, void 0, function* () {
     }
 });
 const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
+    connect();
     const manager = new kafkaManager_1.default();
-    const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
     manager.setProducer(new producer_1.TestProducer());
     manager.setConsumer(new consumer_1.TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
-    yield manager.publishMessage("userCrud", payload);
-    yield manager.startConsumer(consumer);
-    const message = manager.getMessage();
-    console.log("******************************************************");
-    console.log(message);
-    console.log("*******************************************************");
-    console.log("\n");
-    connect(message);
+    let i = 0;
+    while (i < 10) {
+        const payload = payload_1.default.getPayload("create", { firstname: "hi", lastName: "there", age: 18 });
+        yield manager.publishMessage("userCrud", payload);
+        yield manager.startConsumer(consumer);
+        const message = manager.getMessage();
+        console.log("******************************************************");
+        console.log(message);
+        console.log("*******************************************************");
+        console.log("\n");
+        initCrudService(db, message);
+        i++;
+    }
 });
 kafkaManger();
 // connect();

@@ -1,6 +1,7 @@
 import Payload from "../payload";
 import * as userSchema from "../schemas/userSchema";
 import * as util from "util";
+import * as mongoose from "mongoose";
 
 export default class UserCrud {
 
@@ -11,24 +12,24 @@ export default class UserCrud {
     private mongooseConection: any;
     private userModel: any;
 
-    constructor(payload: any, mongooseConection: any) {
+    constructor(payload: any, mongooseConection: any, userSchema: mongoose.Schema) {
         this.payload = Payload.getPayload(payload.functionName, payload.args);
         this.mongooseConection = mongooseConection;
-        const UserSchema = userSchema.makeUserSchema();
+        const UserSchema = userSchema;
         this.userModel = this.mongooseConection.model("user", UserSchema);
 
 
     }
     public init() {
 
-        console.log(this.payload);
+       // console.log(this.payload);
         this.functionName = this.payload.getFucnName();
         switch (this.functionName) {
 
             case "create":
                 console.log("INFO: Create Method activated ");
-                console.log(this.payload.getArguments());
-                console.log(this.payload.getFucnName());
+              //  console.log(this.payload.getArguments());
+               // console.log(this.payload.getFucnName());
 
                 this.create(this.payload.getArguments());
 
