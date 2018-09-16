@@ -12,7 +12,7 @@ const initCrudService = (connection: any, payload: Payload) => {
     userService.init();
 };
 
-const connect = async (data: any) => {
+const connect = async (data: Payload) => {
     try {
 
         const db = await mongoose.connect("mongodb://mongoDB:27017/user", );
@@ -34,7 +34,10 @@ const kafkaManger = async () => {
     await manager.publishMessage("userCrud", payload);
     await manager.startConsumer(consumer);
     const message = manager.getMessage();
-    console.log(message);
+    console.log("******************************************************");
+    console.log( message);
+    console.log("*******************************************************");
+
     console.log("\n");
 
     connect(message);

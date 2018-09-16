@@ -1,6 +1,6 @@
 export default class Payload {
 
-    private functionName: string;
+    public functionName: string;
     private args: any;
     public static getPayload(fn: string, args: any) {
         return new Payload(fn, args);

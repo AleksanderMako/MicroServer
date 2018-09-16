@@ -7,7 +7,8 @@
     "start": "npm run build && node dist/mongoose.connect.js",
     "build": "npm run tslint && tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tslint": "tslint -c tslint.json -p tsconfig.json --fix"
+    "tslint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "debug" :"npm run build && node --inspect-brk=0.0.0.0:9229 dist/mongoose.connect.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,8 @@
   },
   "homepage": "https://github.com/amako1997/Inf-Senior-Project#readme",
   "dependencies": {
-    "kafka-node": "~2.6.1",
+    "@types/kafka-node": "^2.0.7",
+    "kafka-node": "^2.6.1",
     "mongoose": "^5.2.13",
     "tsc": "^1.20150623.0",
     "tslint": "5.11.0"

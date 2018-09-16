@@ -1,4 +1,5 @@
 import * as kafka from "kafka-node";
+import { resolve } from "dns";
 
 
 export class TestConsumer {
@@ -25,14 +26,19 @@ export class TestConsumer {
         return this.consumer;
 
     }
-    public async startConsumer(consumer: kafka.ConsumerGroup) {
-        consumer.on("message", (message) => {
-            this.consume(message);
+    public startConsumer(consumer: kafka.ConsumerGroup) {
+        return new Promise((resolve, reject) => {
+            consumer.on("message", (message) => {
+                resolve(message);
+            });
+            consumer.on("error", (e) => { reject(e); });
         });
-        consumer.on("error", (e) => { console.log(e); });
+
+
+
 
     }
-    private consume(message: kafka.Message) {
+    public consume(message: kafka.Message) {
         console.log("Consuming msg ");
         console.log("\n");
 
@@ -42,8 +48,8 @@ export class TestConsumer {
         console.log(typeof dt);
         console.log("\n");
 
-        // console.log( dt);
-
+        // console.log(dt);
+        this.messageObject = dt;
 
         console.log(`consumer: ${this.id}, key: ${message.key}, partition: ${message.partition}`);
         console.log("\n");
@@ -52,14 +58,13 @@ export class TestConsumer {
             if (err) {
                 console.log(err);
                 console.log("\n");
-
-            } else {
-                this.messageObject = dt;
             }
         });
     }
 
     public getmessage() {
+
         return this.messageObject;
+
     }
 }

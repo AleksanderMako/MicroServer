@@ -8,7 +8,7 @@ export default class KafkaManager {
 
     private consumerObject: TestConsumer;
     private producerObject: TestProducer;
-
+    private msg: any;
     constructor() {
 
     }
@@ -32,7 +32,9 @@ export default class KafkaManager {
 
     }
     public async startConsumer(consumer: kafka.ConsumerGroup) {
-        await this.consumerObject.startConsumer(consumer);
+        this.msg = await this.consumerObject.startConsumer(consumer);
+        this.consumerObject.consume(this.msg);
+
 
     }
     public getMessage() {

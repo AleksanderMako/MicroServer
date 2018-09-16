@@ -11,8 +11,8 @@ export default class UserCrud {
     private mongooseConection: any;
     private userModel: any;
 
-    constructor(payload: Payload, mongooseConection: any) {
-        this.payload = payload;
+    constructor(payload: any, mongooseConection: any) {
+        this.payload = Payload.getPayload(payload.functionName, payload.args);
         this.mongooseConection = mongooseConection;
         const UserSchema = userSchema.makeUserSchema();
         this.userModel = this.mongooseConection.model("user", UserSchema);
@@ -21,6 +21,7 @@ export default class UserCrud {
     }
     public init() {
 
+        console.log(this.payload);
         this.functionName = this.payload.getFucnName();
         switch (this.functionName) {
 

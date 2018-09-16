@@ -1,0 +1,19 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "launch-debug-container",
+            "command": "cd user-registration-service && docker-compose up --build ",
+            "type": "shell",
+            "group": "build",
+            "isBackground": true
+        },
+        {
+            "label": "end-debug-container",
+            "command": "docker-compose down",
+            "type": "shell",
+            "group": "build",
+            "isBackground": true
+        }
+    ]
+}

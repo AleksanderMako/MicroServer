@@ -1,6 +1,6 @@
 import * as kafka from "kafka-node";
 import Payload from "../payload";
-
+import * as util from "util";
 
 
 export class TestProducer {
@@ -44,12 +44,29 @@ export class TestProducer {
             this.producer.send(payloads, (err, data) => {
                 if (err) {
                     console.log("Producer Error :" + err);
+
                 } else {
                     console.log(`message ${JSON.stringify(message)} published`);
                     console.log("\n");
 
                 }
             });
+            /*  return new Promise((resolve, reject) => {
+                 this.producer.send(payloads, (err, data) => {
+                     if (err) {
+                         console.log("Producer Error :" + err);
+                         reject(err);
+                     } else {
+                         console.log(`message ${JSON.stringify(message)} published`);
+                         console.log("\n");
+                         resolve(data);
+
+                     }
+                 });
+
+
+             }); */
+
 
 
             messageCounter++;

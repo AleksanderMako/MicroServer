@@ -37,7 +37,9 @@ const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
     yield manager.publishMessage("userCrud", payload);
     yield manager.startConsumer(consumer);
     const message = manager.getMessage();
+    console.log("******************************************************");
     console.log(message);
+    console.log("*******************************************************");
     console.log("\n");
     connect(message);
 });
