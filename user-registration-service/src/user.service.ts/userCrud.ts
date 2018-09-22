@@ -6,20 +6,15 @@ import Irepository from "../repository/Irepository";
 
 export default class UserCrud {
 
-
     private payload: Payload;
     private functionName: string;
     private args: any;
-    private mongooseConection: any;
-    private userModel: any;
     private userRepo: Irepository;
 
     constructor(payload: any, userRepositoryObject: Irepository) {
+
         this.payload = Payload.getPayload(payload.functionName, payload.args);
-
         this.userRepo = userRepositoryObject;
-
-
     }
     public init() {
 
@@ -31,19 +26,13 @@ export default class UserCrud {
                 console.log("INFO: Create Method activated ");
                 console.log("\n ");
                 console.log("\n ");
-
-
-                //  console.log(this.payload.getArguments());
-                // console.log(this.payload.getFucnName());
-
                 this.create(this.payload.getArguments());
-
                 break;
             case "read":
                 console.log("INFO: read Method activated ");
                 console.log("\n ");
                 console.log("\n ");
-                 this.read();
+                this.read();
 
                 break;
             case "update":

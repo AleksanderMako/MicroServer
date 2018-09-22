@@ -47,15 +47,17 @@ const kafkaManger = async () => {
     let i = 0;
 
     // await manager.publishMessage("userCrud", payload);
-    await manager.startConsumer(consumer);
-    const message = manager.getMessage();
-    // console.log("******************************************************");
-    // console.log(message);
-    // console.log("*******************************************************");
-    // const payload = Payload.getPayload( message.functionName, message.args);
+    while (true) {
+        await manager.startConsumer(consumer);
+        const message = manager.getMessage();
+        // console.log("******************************************************");
+        // console.log(message);
+        // console.log("*******************************************************");
+        // const payload = Payload.getPayload( message.functionName, message.args);
 
-    console.log("\n");
-    initCrudService(db, message);
+        console.log("\n");
+        initCrudService(db, message);
+    }
     i++;
 
 };

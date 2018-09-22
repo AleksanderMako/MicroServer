@@ -26,6 +26,6 @@ export default class ApiRouter {
     }
 
     private initApiRoutes() {
-        this.router.use("/", this.controllerObj.getUserControllerRouterObject());
+        this.router.use("/user", this.controllerObj.getUserControllerRouterObject());
     }
 }

@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
 const userCrud_1 = require("./user.service.ts/userCrud");
-const payload_1 = require("./payload");
 const consumer_1 = require("./kafkaSoftware/consumer");
 const producer_1 = require("./kafkaSoftware/producer");
 const kafkaManager_1 = require("./kafkaSoftware/kafkaservices/kafkaManager");
@@ -42,18 +41,18 @@ const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
     manager.setConsumer(new consumer_1.TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
     let i = 0;
-    while (i < 10) {
-        const payload = payload_1.default.getPayload(arr[i % 3], { firstname: "hi", lastName: "there", age: 18 });
-        yield manager.publishMessage("userCrud", payload);
+    // await manager.publishMessage("userCrud", payload);
+    while (true) {
         yield manager.startConsumer(consumer);
         const message = manager.getMessage();
         // console.log("******************************************************");
         // console.log(message);
         // console.log("*******************************************************");
+        // const payload = Payload.getPayload( message.functionName, message.args);
         console.log("\n");
         initCrudService(db, message);
-        i++;
     }
+    i++;
 });
 kafkaManger();
 // connect();
