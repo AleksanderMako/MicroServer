@@ -23,7 +23,7 @@ const connect = async () => {
 
 
         userSchema = schema.makeUserSchema();
-        db = await mongoose.connect("mongodb://mongoDB:27017/user", );
+        db = await mongoose.connect("mongodb://mongoDB:27017/user");
         userRepositoryObject = new UserRepository(db, userSchema);
 
 
@@ -45,19 +45,19 @@ const kafkaManger = async () => {
     manager.setConsumer(new TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
     let i = 0;
-    while (i < 10) {
-        const payload = Payload.getPayload(arr[i % 3], { firstname: "hi", lastName: "there", age: 18 });
-        await manager.publishMessage("userCrud", payload);
-        await manager.startConsumer(consumer);
-        const message = manager.getMessage();
-        // console.log("******************************************************");
-        // console.log(message);
-        // console.log("*******************************************************");
 
-        console.log("\n");
-        initCrudService(db, message);
-        i++;
-    }
+    // await manager.publishMessage("userCrud", payload);
+    await manager.startConsumer(consumer);
+    const message = manager.getMessage();
+    // console.log("******************************************************");
+    // console.log(message);
+    // console.log("*******************************************************");
+    // const payload = Payload.getPayload( message.functionName, message.args);
+
+    console.log("\n");
+    initCrudService(db, message);
+    i++;
+
 };
 
 kafkaManger();

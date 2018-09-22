@@ -1,0 +1,8 @@
+version: "3"
+services:
+  api_gateway:
+    container_name: api_gateway
+    build: .
+    ports:
+      - "4000:4000"
+    command: bash -c "npm start"
