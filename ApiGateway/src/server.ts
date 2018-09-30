@@ -13,7 +13,7 @@ export class Server {
 
     constructor() {
 
-        console.log("INFO:API PORT :" + process.env.API_PORT);
+        console.log("INFO:API PORT :" + 4000);
         this.initServer();
     }
 

@@ -20,7 +20,7 @@ export class TestProducer {
         this.producer = new kafka.Producer(this.client, options);
     }
 
-    public async start(topic: string, message: Payload) {
+    public async start(topic: string, message: any) {
        // console.log("DEBUG: ENTERED START METHOD ");
         console.log("\n");
         this.buffMessage = JSON.stringify(message);

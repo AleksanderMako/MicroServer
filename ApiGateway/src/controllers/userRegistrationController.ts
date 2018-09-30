@@ -5,6 +5,7 @@ import { relative } from "path";
 import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Payload from "../payload";
+import { TestConsumer } from "../kafkaSoftware/consumer";
 
 
 
@@ -13,6 +14,7 @@ export class UserController {
 
     private controllerRouterObject: Router;
     private KafkaManager: KafkaManager;
+    private consumer: any;
     /**
      *
      */
@@ -20,9 +22,8 @@ export class UserController {
         this.initControllerRoutes();
         this.KafkaManager = new KafkaManager();
         this.KafkaManager.setProducer(new TestProducer());
-
-
-
+        this.KafkaManager.setConsumer(new TestConsumer());
+        this.consumer = this.KafkaManager.createConsumerObject("userCrudResponce", "id-2", "g2");
     }
 
     public initControllerRoutes() {
@@ -31,7 +32,18 @@ export class UserController {
 
             const payload = req.body;
             const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-           await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
+            await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
+            await this.KafkaManager.startConsumer(this.consumer);
+            const operationStatus = this.KafkaManager.getMessage();
+            //  console.log(operationStatus.messageStatus);
+            res.send("operationStatus.messageStatus");
+
+        });
+        this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
+
+            const payload = req.body;
+            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+            await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
             res.send("object recieved");
 
         });

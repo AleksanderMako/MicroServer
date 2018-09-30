@@ -1,0 +1,20 @@
+post user 
+{
+  "functionName":"create",
+  "args": 
+  {
+    "username":"user2",
+    "password":"passs",
+    "firstname":"alex",
+    "lastName":"mako",
+    "age":21
+  }
+}
+get users from db 
+{
+  "functionName":"read",
+  "args": 
+  {
+    
+  }
+}

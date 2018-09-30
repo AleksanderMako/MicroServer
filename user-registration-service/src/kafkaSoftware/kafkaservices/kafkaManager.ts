@@ -22,7 +22,7 @@ export default class KafkaManager {
         this.consumerObject = consumer;
     }
 
-    public async publishMessage(topic: string, message: Payload) {
+    public async publishMessage(topic: string, message: any) {
 
         await this.producerObject.start(topic, message);
     }

@@ -2,6 +2,8 @@ import Payload from "../payload";
 import * as userSchema from "../schemas/userSchema";
 import * as util from "util";
 import * as mongoose from "mongoose";
+import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
+import { TestProducer } from "../kafkaSoftware/producer";
 import Irepository from "../repository/Irepository";
 
 export default class UserCrud {
@@ -10,15 +12,16 @@ export default class UserCrud {
     private functionName: string;
     private args: any;
     private userRepo: Irepository;
-
+    private KafkaManager: KafkaManager;
     constructor(payload: any, userRepositoryObject: Irepository) {
 
         this.payload = Payload.getPayload(payload.functionName, payload.args);
         this.userRepo = userRepositoryObject;
+        this.KafkaManager = new KafkaManager();
+        this.KafkaManager.setProducer(new TestProducer());
     }
     public init() {
 
-        // console.log(this.payload);
         this.functionName = this.payload.getFucnName();
         switch (this.functionName) {
 
@@ -46,11 +49,9 @@ export default class UserCrud {
 
     }
 
-    public create(args: any) {
-
-
-        this.userRepo.create(args);
-
+    public async  create(args: any) {
+        await this.userRepo.create(args);
+        await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: "success" });
     }
 
     public async  read() {
