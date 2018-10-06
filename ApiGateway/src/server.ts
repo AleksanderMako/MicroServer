@@ -4,11 +4,13 @@ import routes from "./routes";
 import { UserController } from "./controllers/userRegistrationController";
 import app from "./app";
 import { Application } from "express";
+import { FlightController } from "./controllers/flightController";
 
 dotenv.config({ path: ".env" });
 
 export class Server {
-    private mockControllerObj: UserController;
+    private UserController: UserController;
+    private FlightController: FlightController;
     private applicationObject: Application;
 
     constructor() {
@@ -18,8 +20,9 @@ export class Server {
     }
 
     private initServer() {
-        this.mockControllerObj = new UserController();
-        const apiRoutes = new routes(this.mockControllerObj);
+        this.UserController = new UserController();
+        this.FlightController = new FlightController();
+        const apiRoutes = new routes(this.UserController, this.FlightController);
         this.applicationObject = new app(apiRoutes).getApp();
         this.applicationObject.set("port", 4000);
         console.log("INFO:Init method completed");

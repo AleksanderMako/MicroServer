@@ -12,4 +12,4 @@ RUN npm install --verbose
 
 COPY . /app
 
-EXPOSE 3000
+EXPOSE 3001

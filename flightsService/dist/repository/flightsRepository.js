@@ -1,24 +1,15 @@
-import * as userSchema from "../schemas/flightSchema";
-
-import * as mongoose from "mongoose";
-import Irepository from "./Irepository";
-
-export default class FlightRepository implements Irepository {
-
-    private mongooseConection: any;
-    private Model: mongoose.Model<any>;
-
-
-    constructor(mongooseConection: any, Schema: mongoose.Schema) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class FlightRepository {
+    constructor(mongooseConection, Schema) {
         this.mongooseConection = mongooseConection;
         const flightSchema = Schema;
         this.Model = this.mongooseConection.model("flight", flightSchema);
     }
-    public setModel(model: mongoose.Model<any>) {
+    setModel(model) {
         this.Model = model;
     }
-
-    public create(data: any) {
+    create(data) {
         const flight = new this.Model({
             flightNumber: data.flightNumber,
             departure: data.departure,
@@ -26,39 +17,31 @@ export default class FlightRepository implements Irepository {
             airplaneType: data.airplaneType,
             capacity: data.capacity
         });
-
         return new Promise((resolve, reject) => {
-            flight.save((err: Error) => {
-
+            flight.save((err) => {
                 if (err) {
                     console.log("ERROR:" + err);
                     reject(err);
-
-                } else {
+                }
+                else {
                     resolve();
                     console.log("INFO:Success");
-
                 }
             });
         });
-
     }
-
-    public readAll() {
+    readAll() {
         return new Promise((resolve, reject) => {
-
             this.Model.find({}, (err, users) => {
-
                 if (err) {
                     reject(err);
-
-                } else {
+                }
+                else {
                     resolve(users);
                 }
             });
         });
-
-
     }
-
 }
+exports.default = FlightRepository;
+//# sourceMappingURL=flightsRepository.js.map

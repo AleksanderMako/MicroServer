@@ -52,7 +52,7 @@ export default class FlightsCrud {
     public async  create(args: any) {
         await this.flightRepo.create(args);
         // TODO:change the topic for flights publishing
-        await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: "success" });
+        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
     }
 
     public async  read() {
