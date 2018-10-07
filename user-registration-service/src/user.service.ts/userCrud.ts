@@ -38,6 +38,14 @@ export default class UserCrud {
                 this.read();
 
                 break;
+
+            case "readOne":
+                console.log("INFO: readOne Method activated ");
+                console.log("\n ");
+                console.log("\n ");
+                this.readOne(this.payload.getArguments());
+
+                break;
             case "update":
                 console.log("INFO: update Method activated ");
                 break;
@@ -58,6 +66,14 @@ export default class UserCrud {
         const users = await this.userRepo.readAll();
         await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(users) });
         console.log(users);
+    }
+
+    public async readOne(args: any) {
+        const user = await this.userRepo.readOne(args);
+        await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(user) });
+
+        console.log(user);
+
     }
 
     // update()  {}

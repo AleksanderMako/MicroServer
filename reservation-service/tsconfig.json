@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "outDir": "dist",
+        "module": "commonjs",
+        "target": "es6",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "skipLibCheck": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "allowJs":true,
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "flightsService/src/types/*"
+            ]
+        }
+    },
+    "include": [
+        "./src/**/*.ts", "src/cacheService/cache.js"
+    ],
+    "exclude": [
+        "node_modules/*",
+        "./test/**/*.ts",
+        "./dist"
+    ]
+}

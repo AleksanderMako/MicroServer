@@ -38,7 +38,7 @@ export const makeFlightSchema = () => {
             required: true
         },
         capacity: {
-            type: Number ,
+            type: Number,
             required: true,
             min: 1,
             max: 200,
@@ -51,5 +51,6 @@ export const makeFlightSchema = () => {
         }
 
     });
+    flightSchema.index({ flightNumber: 1 }, { unique: true });
     return flightSchema;
 };

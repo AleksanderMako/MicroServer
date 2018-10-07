@@ -49,6 +49,7 @@ exports.makeFlightSchema = () => {
             }
         }
     });
+    flightSchema.index({ flightNumber: 1 }, { unique: true });
     return flightSchema;
 };
 //# sourceMappingURL=flightSchema.js.map

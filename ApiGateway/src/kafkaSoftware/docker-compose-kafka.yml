@@ -15,7 +15,7 @@ services:
       KAFKA_ADVERTISED_HOST_NAME: 172.17.0.1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-      KAFKA_CREATE_TOPICS: "userCrud:3:1,userCrudResponce:3:1,flightCrud:3:1,flightCrudResponse:3:1"
+      KAFKA_CREATE_TOPICS: "userCrud:3:1,userCrudResponce:3:1,flightCrud:3:1,flightCrudResponse:3:1,reservations:3:1,reservationResponse:3:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:

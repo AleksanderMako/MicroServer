@@ -38,6 +38,13 @@ export default class FlightsCrud {
                 this.read();
 
                 break;
+            case "readOne":
+                console.log("INFO: readOne Method activated ");
+                console.log("\n ");
+                console.log("\n ");
+                this.readOne(this.payload.getArguments());
+
+                break;
             case "update":
                 console.log("INFO: update Method activated ");
                 break;
@@ -59,6 +66,11 @@ export default class FlightsCrud {
         const flights = await this.flightRepo.readAll();
         await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
         console.log(flights);
+    }
+    public async  readOne(args: any) {
+        const flight = await this.flightRepo.readOne(args);
+        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
+        console.log(flight);
     }
 
     // update()  {}

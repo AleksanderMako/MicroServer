@@ -59,5 +59,19 @@ export default class FlightRepository implements Irepository {
         });
 
     }
+    public readOne(data: any) {
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOne({ "flightNumber": `${data.flightid}` }, (err, user) => {
+
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(user);
+                }
+            });
+        });
+
+    }
 
 }

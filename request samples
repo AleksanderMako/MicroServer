@@ -18,3 +18,11 @@ get users from db
     
   }
 }
+{
+  "functionName":"readOne",
+  "args": 
+  {
+    "id":"user2",
+    "flightid":"fr-6300"
+  }
+}

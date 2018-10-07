@@ -51,5 +51,7 @@ export const makeUserSchema = () => {
         }
 
     });
+    userSchema.index({ username: 1 }, { unique: true });
+
     return userSchema;
 };

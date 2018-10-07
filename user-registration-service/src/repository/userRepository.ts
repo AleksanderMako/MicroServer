@@ -60,5 +60,19 @@ export default class UserRepository implements Irepository {
 
 
     }
+    public readOne(data: any) {
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOne({ "username": `${data.id}` }, (err, user) => {
+
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(user);
+                }
+            });
+        });
+
+    }
 
 }

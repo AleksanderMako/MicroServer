@@ -33,6 +33,12 @@ class FlightsCrud {
                 console.log("\n ");
                 this.read();
                 break;
+            case "readOne":
+                console.log("INFO: readOne Method activated ");
+                console.log("\n ");
+                console.log("\n ");
+                this.readOne(this.payload.getArguments());
+                break;
             case "update":
                 console.log("INFO: update Method activated ");
                 break;
@@ -53,8 +59,16 @@ class FlightsCrud {
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {
-            const users = yield this.flightRepo.readAll();
-            console.log(users);
+            const flights = yield this.flightRepo.readAll();
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
+            console.log(flights);
+        });
+    }
+    readOne(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const flight = yield this.flightRepo.readOne(args);
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
+            console.log(flight);
         });
     }
 }
