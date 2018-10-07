@@ -35,8 +35,9 @@ export class UserController {
             await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
+            console.log(operationStatus.successStatus);
             //  console.log(operationStatus.messageStatus);
-            res.send("operationStatus.messageStatus");
+            res.send(operationStatus.successStatus);
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
@@ -44,7 +45,9 @@ export class UserController {
             const payload = req.body;
             const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
             await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
-            res.send("object recieved");
+            await this.KafkaManager.startConsumer(this.consumer);
+            const operationStatus = this.KafkaManager.getMessage();
+            res.send(operationStatus.successStatus);
 
         });
     }

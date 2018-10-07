@@ -9,6 +9,7 @@
         "skipLibCheck": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
+        "allowJs":true,
         "paths": {
             "*": [
                 "node_modules/*",
@@ -17,7 +18,7 @@
         }
     },
     "include": [
-        "./src/**/*.ts"
+        "./src/**/*.ts", "src/cacheService/cache.js"
     ],
     "exclude": [
         "node_modules/*",

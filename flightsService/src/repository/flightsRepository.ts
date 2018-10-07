@@ -1,5 +1,4 @@
 import * as userSchema from "../schemas/flightSchema";
-
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
 
@@ -45,6 +44,7 @@ export default class FlightRepository implements Irepository {
     }
 
     public readAll() {
+
         return new Promise((resolve, reject) => {
 
             this.Model.find({}, (err, users) => {
@@ -57,7 +57,6 @@ export default class FlightRepository implements Irepository {
                 }
             });
         });
-
 
     }
 

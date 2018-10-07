@@ -56,6 +56,7 @@ export default class UserCrud {
 
     public async  read() {
         const users = await this.userRepo.readAll();
+        await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(users) });
         console.log(users);
     }
 

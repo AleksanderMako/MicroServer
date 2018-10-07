@@ -56,8 +56,9 @@ export default class FlightsCrud {
     }
 
     public async  read() {
-        const users = await this.flightRepo.readAll();
-        console.log(users);
+        const flights = await this.flightRepo.readAll();
+        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
+        console.log(flights);
     }
 
     // update()  {}

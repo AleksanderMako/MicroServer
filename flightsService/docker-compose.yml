@@ -9,9 +9,10 @@ services:
     ports: 
       - 3001:3001
       - 9228:9228
-    command: bash -c "sleep 8  && npm start"
+    command: bash -c "sleep 10  && npm start"
     depends_on:
       - mongoflight
+      - redis
 
   mongoflight:
     container_name: mongodbflight
@@ -23,6 +24,14 @@ services:
       #MONGO_INITDB_ROOT_PASSWORD: 12
     ports:
        - 27018:27018
+  
+  redis:
+    container_name: redis_server
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+       - 6379:6379
 
 networks:
   ovl_net:

@@ -23,10 +23,13 @@
   "homepage": "https://github.com/amako1997/Inf-Senior-Project#readme",
   "dependencies": {
     "@types/kafka-node": "^2.0.7",
+    "@types/redis": "2.8.6",
     "kafka-node": "^2.6.1",
     "mongoose": "^5.2.13",
+    "redis": "^2.8.0",
     "tsc": "^1.20150623.0",
-    "tslint": "5.11.0"
+    "tslint": "5.11.0",
+    "util": "0.11.0"
   },
   "devDependencies": {
     "@types/mongodb": "^3.1.4",
