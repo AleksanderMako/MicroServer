@@ -32,7 +32,7 @@ export class TestConsumer {
                 console.log("Event triggered ");
                 console.log(message);
                // resolve(message);
-                console.log(resolve(message));
+                resolve(message);
             });
             consumer.on("error", (e) => { reject(e); });
         });
