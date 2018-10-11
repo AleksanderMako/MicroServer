@@ -51,11 +51,15 @@ class FlightsCrud {
         }
     }
     create(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.flightRepo.create(args);
-            // TODO:change the topic for flights publishing
+        return this.flightRepo.create(args)
+            .then(() => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
-        });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            console.log("Error in crud: " + err);
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
+        // TODO:change the topic for flights publishing
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -26,11 +26,12 @@ export default class FlightRepository implements Irepository {
             capacity: data.capacity
         });
 
+        // const error: Error = flight.validateSync();
         return new Promise((resolve, reject) => {
             flight.save((err: Error) => {
 
                 if (err) {
-                    console.log("ERROR:" + err);
+                    console.log("ERROR Inside promise:" + err);
                     reject(err);
 
                 } else {

@@ -27,11 +27,12 @@ export default class UserRepository implements Irepository {
             age: data.age
         });
 
+        // const error: Error = user.validateSync();
         return new Promise((resolve, reject) => {
             user.save((err: Error) => {
 
                 if (err) {
-                    console.log("ERROR:" + err);
+                    console.log("ERROR Inside Promise:" + err);
                     reject(err);
 
                 } else {

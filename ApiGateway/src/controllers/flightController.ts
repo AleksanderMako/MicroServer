@@ -36,7 +36,7 @@ export class FlightController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
             //  console.log(operationStatus.messageStatus);
-            res.send("operationStatus.successStatus");
+            res.send(operationStatus.successStatus);
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {

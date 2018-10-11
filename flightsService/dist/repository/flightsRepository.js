@@ -17,10 +17,11 @@ class FlightRepository {
             airplaneType: data.airplaneType,
             capacity: data.capacity
         });
+        // const error: Error = flight.validateSync();
         return new Promise((resolve, reject) => {
             flight.save((err) => {
                 if (err) {
-                    console.log("ERROR:" + err);
+                    console.log("ERROR Inside promise:" + err);
                     reject(err);
                 }
                 else {
