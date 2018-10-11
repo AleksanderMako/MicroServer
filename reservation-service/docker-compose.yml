@@ -1,21 +1,21 @@
 version: "3"
 services:
   api:
-    container_name: "flight-registration-service"
+    container_name: "reservation-service"
     build: .
     working_dir: /app
     volumes: 
       - .:/app
     ports: 
-      - 3001:3001
-      - 9228:9228
+      - 3002:3002
+      - 9238:9228
     command: bash -c "sleep 10  && npm start"
     depends_on:
-      - mongoflight
-      - redis
+      - mongoreserve
+   
 
-  mongoflight:
-    container_name: mongodbflight
+  mongoreserve:
+    container_name: mongodb_reservation
     image: mongo
     restart: always
     command: mongod --port 27019
@@ -24,14 +24,7 @@ services:
       #MONGO_INITDB_ROOT_PASSWORD: 12
     ports:
        - 27019:27019
-  
-  redis:
-    container_name: redis_server
-    image: bitnami/redis:latest
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-       - 6379:6379
+
 
 networks:
   ovl_net:

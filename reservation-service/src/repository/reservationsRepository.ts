@@ -1,36 +1,40 @@
-import * as userSchema from "../schemas/flightSchema";
+import * as userSchema from "../schemas/ReservationSchema";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
 
-export default class FlightRepository implements Irepository {
+export default class ReservationsRepository implements Irepository {
 
     private mongooseConection: any;
     private Model: mongoose.Model<any>;
-
+    private userPayload: any;
+    private flightPayload: any;
 
     constructor(mongooseConection: any, Schema: mongoose.Schema) {
         this.mongooseConection = mongooseConection;
-        const flightSchema = Schema;
-        this.Model = this.mongooseConection.model("flight", flightSchema);
+        const ReservationSchema = Schema;
+        this.Model = this.mongooseConection.model("reservation", ReservationSchema);
     }
     public setModel(model: mongoose.Model<any>) {
         this.Model = model;
     }
 
     public create(data: any) {
-        const flight = new this.Model({
-            flightNumber: data.flightNumber,
-            departure: data.departure,
-            destination: data.destination,
-            airplaneType: data.airplaneType,
-            capacity: data.capacity
+        this.userPayload = JSON.parse(data.user);
+        this.flightPayload = JSON.parse(data.flight);
+        const reservation = new this.Model({
+            flightNumber: this.flightPayload.flightNumber,
+            departure: this.flightPayload.departure,
+            destination: this.flightPayload.destination,
+            firstname: this.userPayload.firstname,
+            lastname: this.userPayload.lastName,
+            seatNumber: ""
         });
 
         return new Promise((resolve, reject) => {
-            flight.save((err: Error) => {
+            reservation.save((err: Error) => {
 
                 if (err) {
-                    console.log("ERROR:" + err);
+                    console.log("ERROR Inside Promise:" + err);
                     reject(err);
 
                 } else {

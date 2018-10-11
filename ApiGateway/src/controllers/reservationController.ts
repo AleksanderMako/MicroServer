@@ -16,6 +16,7 @@ export class ReservationController {
     private KafkaManager: KafkaManager;
     private consumer: any;
     private flightCrudConsumer: any;
+    private reservationCrudConsumer: any;
     /**
      *
      */
@@ -24,8 +25,11 @@ export class ReservationController {
         this.KafkaManager = new KafkaManager();
         this.KafkaManager.setProducer(new TestProducer());
         this.KafkaManager.setConsumer(new TestConsumer());
+
         this.consumer = this.KafkaManager.createConsumerObject("userCrudResponce", "reservationCrudConsumer-1", "reservationCrudConsumerGroup-1");
         this.flightCrudConsumer = this.KafkaManager.createConsumerObject("flightCrudResponse", "reservationCrudConsumer-2", "reservationCrudConsumerGroup-2");
+        this.reservationCrudConsumer = this.KafkaManager.createConsumerObject("reservationResponse", "reservationCrudConsumer-3", "reservationCrudConsumerGroup-3");
+
 
     }
 
@@ -38,8 +42,8 @@ export class ReservationController {
             /// get the user from the db by unique username
             await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.consumer);
-            const operationStatus = this.KafkaManager.getMessage();
-            console.log(operationStatus.successStatus);
+            const user = this.KafkaManager.getMessage();
+            console.log(user.successStatus);
             /// get flight number from the service
             await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.flightCrudConsumer);
@@ -47,8 +51,22 @@ export class ReservationController {
             console.log(flight.successStatus);
 
             /// send payload to reservation service
+            const reservationResponse = {
+                flight: flight.successStatus,
+                user: user.successStatus
+            };
+            const reservationsPayload = {
+                functionName: "create",
+                args: reservationResponse
+            };
+            const kafkaReservationsPayload = Payload.getPayload(reservationsPayload.functionName, reservationsPayload.args);
 
-            res.send(operationStatus.successStatus);
+            await this.KafkaManager.publishMessage("reservations", kafkaReservationsPayload);
+            await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+            const reservation = this.KafkaManager.getMessage();
+            console.log(reservation.successStatus);
+
+            res.send(reservation.successStatus);
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {

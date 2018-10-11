@@ -11,10 +11,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const payload_1 = require("../payload");
 const kafkaManager_1 = require("../kafkaSoftware/kafkaservices/kafkaManager");
 const producer_1 = require("../kafkaSoftware/producer");
-class FlightsCrud {
-    constructor(payload, flightRepositoryObject) {
+class ReservationssCrud {
+    constructor(payload, reservationRepositoryObject) {
         this.payload = payload_1.default.getPayload(payload.functionName, payload.args);
-        this.flightRepo = flightRepositoryObject;
+        this.reservationRepo = reservationRepositoryObject;
         this.KafkaManager = new kafkaManager_1.default();
         this.KafkaManager.setProducer(new producer_1.TestProducer());
     }
@@ -25,6 +25,7 @@ class FlightsCrud {
                 console.log("INFO: Create Method activated ");
                 console.log("\n ");
                 console.log("\n ");
+                console.log("INFO: Recieved payload:" + this.payload.getArguments());
                 this.create(this.payload.getArguments());
                 break;
             case "read":
@@ -32,12 +33,6 @@ class FlightsCrud {
                 console.log("\n ");
                 console.log("\n ");
                 this.read();
-                break;
-            case "readOne":
-                console.log("INFO: readOne Method activated ");
-                console.log("\n ");
-                console.log("\n ");
-                this.readOne(this.payload.getArguments());
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
@@ -51,30 +46,22 @@ class FlightsCrud {
         }
     }
     create(args) {
-        return this.flightRepo.create(args)
+        return this.reservationRepo.create(args)
             .then(() => __awaiter(this, void 0, void 0, function* () {
-            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: "success" });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
-            console.log("Error in crud: " + err);
-            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
         }));
         // TODO:change the topic for flights publishing
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {
-            const flights = yield this.flightRepo.readAll();
-            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
-            console.log(flights);
-        });
-    }
-    readOne(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const flight = yield this.flightRepo.readOne(args);
-            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
-            console.log(flight);
+            const reservations = yield this.reservationRepo.readAll();
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(reservations) });
+            console.log(reservations);
         });
     }
 }
-exports.default = FlightsCrud;
-//# sourceMappingURL=flightCrud.js.map
+exports.default = ReservationssCrud;
+//# sourceMappingURL=ReservationCrud.js.map

@@ -1,22 +1,23 @@
 import Payload from "../payload";
-import * as userSchema from "../schemas/flightSchema";
+import * as userSchema from "../schemas/ReservationSchema";
 import * as util from "util";
 import * as mongoose from "mongoose";
 import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Irepository from "../repository/Irepository";
 
-export default class FlightsCrud {
+export default class ReservationssCrud {
 
     private payload: Payload;
     private functionName: string;
     private args: any;
-    private flightRepo: Irepository;
+    private reservationRepo: Irepository;
     private KafkaManager: KafkaManager;
-    constructor(payload: any, flightRepositoryObject: Irepository) {
+
+    constructor(payload: any, reservationRepositoryObject: Irepository) {
 
         this.payload = Payload.getPayload(payload.functionName, payload.args);
-        this.flightRepo = flightRepositoryObject;
+        this.reservationRepo = reservationRepositoryObject;
         this.KafkaManager = new KafkaManager();
         this.KafkaManager.setProducer(new TestProducer());
     }
@@ -29,6 +30,7 @@ export default class FlightsCrud {
                 console.log("INFO: Create Method activated ");
                 console.log("\n ");
                 console.log("\n ");
+                console.log("INFO: Recieved payload:" + this.payload.getArguments());
                 this.create(this.payload.getArguments());
                 break;
             case "read":
@@ -49,16 +51,24 @@ export default class FlightsCrud {
 
     }
 
-    public async  create(args: any) {
-        await this.flightRepo.create(args);
+    public create(args: any) {
+
+        return this.reservationRepo.create(args)
+            .then(async () => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: "success" });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+
+            });
         // TODO:change the topic for flights publishing
-        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
     }
 
     public async  read() {
-        const flights = await this.flightRepo.readAll();
-        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
-        console.log(flights);
+        const reservations = await this.reservationRepo.readAll();
+        await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(reservations) });
+        console.log(reservations);
     }
 
     // update()  {}
