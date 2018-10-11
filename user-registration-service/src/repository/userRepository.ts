@@ -76,4 +76,38 @@ export default class UserRepository implements Irepository {
 
     }
 
+    public async update(data: any) {
+
+        const query = this.Model.findOne({ "username:": `${data.username}` });
+        let user = await this.execQuery(query);
+        user = this.copy(data);
+        return new Promise((resolve, reject) => {
+            user.save((err: Error) => {
+
+            });
+        });
+
+
+    }
+
+    private copy(obj: any) {
+
+        return JSON.parse(JSON.stringify(obj));
+    }
+
+    private execQuery(query: mongoose.DocumentQuery<any, any>): Promise<mongoose.Document> {
+
+        return new Promise((resolve, reject) => {
+            query.exec(function (err, document) {
+
+                if (err) {
+                    reject(err);
+                } else {
+
+                    resolve(document);
+                }
+            });
+        });
+
+    }
 }

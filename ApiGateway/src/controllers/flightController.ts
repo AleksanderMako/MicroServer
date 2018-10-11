@@ -44,7 +44,10 @@ export class FlightController {
             const payload = req.body;
             const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
             await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
-            res.send("object recieved");
+            await this.KafkaManager.startConsumer(this.consumer);
+            const operationStatus = this.KafkaManager.getMessage();
+
+            res.send(operationStatus.successStatus);
 
         });
     }
