@@ -56,10 +56,17 @@ export default class FlightsCrud {
 
     }
 
-    public async  create(args: any) {
-        await this.flightRepo.create(args);
+    public create(args: any) {
+        return this.flightRepo.create(args)
+            .then(async () => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
+            })
+            .catch(async (err: Error) => {
+                console.log("Error in crud: " + err);
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+
+            });
         // TODO:change the topic for flights publishing
-        await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
     }
 
     public async  read() {

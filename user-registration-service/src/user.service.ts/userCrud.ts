@@ -57,9 +57,15 @@ export default class UserCrud {
 
     }
 
-    public async  create(args: any) {
-        await this.userRepo.create(args);
-        await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: "success" });
+    public create(args: any) {
+        return this.userRepo.create(args)
+            .then(async () => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: "success" });
+            })
+            .catch(async (err: Error) => {
+                console.log("ERROR in Crud : " + err);
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+            });
     }
 
     public async  read() {
