@@ -41,6 +41,7 @@ class FlightsCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
@@ -74,6 +75,15 @@ class FlightsCrud {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
             console.log(flight);
         });
+    }
+    update(args) {
+        return this.flightRepo.update(args)
+            .then((flight) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
     }
 }
 exports.default = FlightsCrud;
