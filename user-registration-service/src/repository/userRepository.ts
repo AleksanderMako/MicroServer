@@ -8,7 +8,6 @@ export default class UserRepository implements Irepository {
     private mongooseConection: any;
     private Model: mongoose.Model<any>;
 
-
     constructor(mongooseConection: any, Schema: mongoose.Schema) {
         this.mongooseConection = mongooseConection;
         const UserSchema = Schema;
@@ -76,18 +75,45 @@ export default class UserRepository implements Irepository {
 
     }
 
-    public async update(data: any) {
+    public update(data: any) {
+        //  let user: any;
 
-        const query = this.Model.findOne({ "username:": `${data.username}` });
-        let user = await this.execQuery(query);
-        user = this.copy(data);
+
         return new Promise((resolve, reject) => {
-            user.save((err: Error) => {
 
-            });
+            this.Model.findOneAndUpdate(
+                { "username": data.username },
+                {
+                    $set: {
+                        password: data.password,
+                        firstname: data.firstname,
+                        lastName: data.lastName,
+                        age: data.age
+                    },
+                }, { runValidators: true, new: true }, (err, document) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        console.log(document);
+                        resolve(document);
+                    }
+                });
         });
 
 
+
+        /* try {
+            user = await this.execQuery(query);
+            console.log("Done");
+            console.log(user);
+
+
+        } catch (err) {
+            console.log(err);
+            return err;
+        }
+        return user; */
     }
 
     private copy(obj: any) {
@@ -95,19 +121,19 @@ export default class UserRepository implements Irepository {
         return JSON.parse(JSON.stringify(obj));
     }
 
-    private execQuery(query: mongoose.DocumentQuery<any, any>): Promise<mongoose.Document> {
+    // private execQuery(query: mongoose.DocumentQuery<any, any>): Promise<mongoose.Document> {
 
-        return new Promise((resolve, reject) => {
-            query.exec(function (err, document) {
+    //     return new Promise((resolve, reject) => {
+    //         query.exec(function (err, document) {
 
-                if (err) {
-                    reject(err);
-                } else {
+    //             if (err) {
+    //                 reject(err);
+    //             } else {
+    //                 console.log("Inside promise : " + document);
+    //                 resolve(document);
+    //             }
+    //         });
+    //     });
 
-                    resolve(document);
-                }
-            });
-        });
-
-    }
+    // }
 }
