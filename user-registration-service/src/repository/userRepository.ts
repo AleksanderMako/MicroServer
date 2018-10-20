@@ -2,12 +2,12 @@ import * as userSchema from "../schemas/userSchema";
 import * as util from "util";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
+import { rejects } from "assert";
 
 export default class UserRepository implements Irepository {
 
     private mongooseConection: any;
     private Model: mongoose.Model<any>;
-
 
     constructor(mongooseConection: any, Schema: mongoose.Schema) {
         this.mongooseConection = mongooseConection;
@@ -75,5 +75,55 @@ export default class UserRepository implements Irepository {
         });
 
     }
+
+    public update(data: any) {
+        //  let user: any;
+
+
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndUpdate(
+                { "username": data.username },
+                {
+                    $set: {
+                        password: data.password,
+                        firstname: data.firstname,
+                        lastName: data.lastName,
+                        age: data.age
+                    },
+                }, { runValidators: true, new: true }, (err, document) => {
+
+                    if (err) {
+                        reject(err);
+                    } else {
+                        console.log(document);
+                        resolve(document);
+                    }
+                });
+        });
+
+
+
+
+    }
+
+    public delete(data: any) {
+
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndRemove(
+                { "username": data.username },
+                (err, document) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(document);
+                    }
+                }
+            );
+        });
+
+    }
+
 
 }

@@ -75,4 +75,50 @@ export default class FlightRepository implements Irepository {
 
     }
 
+    public update(data: any) {
+
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndUpdate(
+                {
+                    "flightNumber": data.flightNumber
+                }, {
+                    $set: {
+                        departure: data.departure,
+                        destination: data.destination,
+                        airplaneType: data.airplaneType,
+                        capacity: data.capacity
+                    }
+                }, {
+                    runValidators: true,
+                    new: true
+                }, (err, document) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(document);
+                    }
+                }
+            );
+        });
+    }
+
+    public delete(data: any) {
+
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndRemove(
+                {  "flightNumber": data.flightNumber },
+                (err, document) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(document);
+                    }
+                }
+            );
+        });
+
+    }
+
 }

@@ -47,9 +47,11 @@ export default class FlightsCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
+                this.delete(this.payload.getArguments());
                 break;
             default: console.log("No method invoked here "); break;
         }
@@ -80,7 +82,27 @@ export default class FlightsCrud {
         console.log(flight);
     }
 
-    // update()  {}
+    public update(args: any) {
+        return this.flightRepo.update(args)
+            .then(async (flight: any) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
 
-    // delete() {}
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+
+            });
+    }
+
+    public delete(args: any) {
+        return this.flightRepo.delete(args)
+            .then(async (deleted: any) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(deleted) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+            });
+    }
 }
+

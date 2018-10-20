@@ -20,7 +20,7 @@
   },
   "include": [
     
-      "./src/**/*.ts", "../flightsService/src/user.service.ts/flightCrud.ts", "../flightsService/src/schemas/flightSchema.ts", "../flightsService/src/payload.ts"
+      "./src/**/*.ts"
   ],
   "exclude": [
       "node_modules/*",

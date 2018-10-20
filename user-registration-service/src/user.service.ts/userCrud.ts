@@ -48,9 +48,11 @@ export default class UserCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
+                this.delete(this.payload.getArguments());
                 break;
             default: console.log("No method invoked here "); break;
         }
@@ -82,7 +84,31 @@ export default class UserCrud {
 
     }
 
-    // update()  {}
+    public update(args: any) {
 
-    // delete() {}
+        return this.userRepo.update(args)
+            .then(async (user: any) => {
+                console.log("User in crud " + user);
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(user) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+
+            });
+
+
+
+    }
+
+    public delete(args: any) {
+        return this.userRepo.delete(args)
+            .then(async (deleted: any) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(deleted) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+            });
+    }
 }
