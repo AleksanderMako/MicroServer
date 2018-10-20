@@ -79,6 +79,18 @@ class FlightRepository {
             });
         });
     }
+    delete(data) {
+        return new Promise((resolve, reject) => {
+            this.Model.findOneAndRemove({ "flightNumber": data.flightNumber }, (err, document) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(document);
+                }
+            });
+        });
+    }
 }
 exports.default = FlightRepository;
 //# sourceMappingURL=flightsRepository.js.map

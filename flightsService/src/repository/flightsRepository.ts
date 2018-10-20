@@ -103,4 +103,22 @@ export default class FlightRepository implements Irepository {
         });
     }
 
+    public delete(data: any) {
+
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndRemove(
+                {  "flightNumber": data.flightNumber },
+                (err, document) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(document);
+                    }
+                }
+            );
+        });
+
+    }
+
 }

@@ -45,6 +45,7 @@ class FlightsCrud {
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
+                this.delete(this.payload.getArguments());
                 break;
             default:
                 console.log("No method invoked here ");
@@ -80,6 +81,15 @@ class FlightsCrud {
         return this.flightRepo.update(args)
             .then((flight) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    delete(args) {
+        return this.flightRepo.delete(args)
+            .then((deleted) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(deleted) });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });

@@ -52,6 +52,7 @@ export default class UserCrud {
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
+                this.delete(this.payload.getArguments());
                 break;
             default: console.log("No method invoked here "); break;
         }
@@ -100,5 +101,14 @@ export default class UserCrud {
 
     }
 
-    // delete() {}
+    public delete(args: any) {
+        return this.userRepo.delete(args)
+            .then(async (deleted: any) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(deleted) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+            });
+    }
 }

@@ -3,5 +3,5 @@ export default interface Irepository {
     readAll(): any;
     readOne(id: any): any;
     update(data: any): any;
-    // delete(): any;
+    delete(data: any): any;
 }

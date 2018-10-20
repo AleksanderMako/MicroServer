@@ -2,6 +2,7 @@ import * as userSchema from "../schemas/userSchema";
 import * as util from "util";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
+import { rejects } from "assert";
 
 export default class UserRepository implements Irepository {
 
@@ -103,37 +104,26 @@ export default class UserRepository implements Irepository {
 
 
 
-        /* try {
-            user = await this.execQuery(query);
-            console.log("Done");
-            console.log(user);
 
-
-        } catch (err) {
-            console.log(err);
-            return err;
-        }
-        return user; */
     }
 
-    private copy(obj: any) {
+    public delete(data: any) {
 
-        return JSON.parse(JSON.stringify(obj));
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndRemove(
+                { "username": data.username },
+                (err, document) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(document);
+                    }
+                }
+            );
+        });
+
     }
 
-    // private execQuery(query: mongoose.DocumentQuery<any, any>): Promise<mongoose.Document> {
 
-    //     return new Promise((resolve, reject) => {
-    //         query.exec(function (err, document) {
-
-    //             if (err) {
-    //                 reject(err);
-    //             } else {
-    //                 console.log("Inside promise : " + document);
-    //                 resolve(document);
-    //             }
-    //         });
-    //     });
-
-    // }
 }

@@ -61,6 +61,17 @@ export class UserController {
             res.send(operationStatus.successStatus);
 
         });
+        this.controllerRouterObject.post("/delete", async (req: Request, res: Response, next: any) => {
+
+            const payload = req.body;
+            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+            await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
+            await this.KafkaManager.startConsumer(this.consumer);
+            const operationStatus = this.KafkaManager.getMessage();
+            console.log(operationStatus.successStatus);
+            res.send(operationStatus.successStatus);
+
+        });
     }
     public getUserControllerRouterObject() {
 
