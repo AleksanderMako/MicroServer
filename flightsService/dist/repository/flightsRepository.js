@@ -17,10 +17,11 @@ class FlightRepository {
             airplaneType: data.airplaneType,
             capacity: data.capacity
         });
+        // const error: Error = flight.validateSync();
         return new Promise((resolve, reject) => {
             flight.save((err) => {
                 if (err) {
-                    console.log("ERROR:" + err);
+                    console.log("ERROR Inside promise:" + err);
                     reject(err);
                 }
                 else {
@@ -50,6 +51,42 @@ class FlightRepository {
                 }
                 else {
                     resolve(user);
+                }
+            });
+        });
+    }
+    update(data) {
+        return new Promise((resolve, reject) => {
+            this.Model.findOneAndUpdate({
+                "flightNumber": data.flightNumber
+            }, {
+                $set: {
+                    departure: data.departure,
+                    destination: data.destination,
+                    airplaneType: data.airplaneType,
+                    capacity: data.capacity
+                }
+            }, {
+                runValidators: true,
+                new: true
+            }, (err, document) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(document);
+                }
+            });
+        });
+    }
+    delete(data) {
+        return new Promise((resolve, reject) => {
+            this.Model.findOneAndRemove({ "flightNumber": data.flightNumber }, (err, document) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(document);
                 }
             });
         });

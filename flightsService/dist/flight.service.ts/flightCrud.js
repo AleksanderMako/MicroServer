@@ -41,9 +41,11 @@ class FlightsCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
+                this.delete(this.payload.getArguments());
                 break;
             default:
                 console.log("No method invoked here ");
@@ -51,11 +53,15 @@ class FlightsCrud {
         }
     }
     create(args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.flightRepo.create(args);
-            // TODO:change the topic for flights publishing
+        return this.flightRepo.create(args)
+            .then(() => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
-        });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            console.log("Error in crud: " + err);
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
+        // TODO:change the topic for flights publishing
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,6 +76,24 @@ class FlightsCrud {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
             console.log(flight);
         });
+    }
+    update(args) {
+        return this.flightRepo.update(args)
+            .then((flight) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flight) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    delete(args) {
+        return this.flightRepo.delete(args)
+            .then((deleted) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(deleted) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
     }
 }
 exports.default = FlightsCrud;
