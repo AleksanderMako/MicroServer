@@ -36,7 +36,6 @@ export default class UserCrud {
                 console.log("\n ");
                 console.log("\n ");
                 this.read();
-
                 break;
 
             case "readOne":
@@ -53,6 +52,11 @@ export default class UserCrud {
             case "delete":
                 console.log("INFO: delete Method activated ");
                 this.delete(this.payload.getArguments());
+                break;
+            case "readCustomers":
+            console.log("INFO: readCustomers Method activated ");
+
+            this.readCustomersBy_usernames(this.payload.getArguments());
                 break;
             default: console.log("No method invoked here "); break;
         }
@@ -96,9 +100,6 @@ export default class UserCrud {
                 await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
 
             });
-
-
-
     }
 
     public delete(args: any) {
@@ -109,6 +110,18 @@ export default class UserCrud {
             })
             .catch(async (err: Error) => {
                 await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+            });
+    }
+
+    public readCustomersBy_usernames(data: any) {
+        return this.userRepo.readByUsernames(data)
+            .then(async (perflight_Customers: any) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(perflight_Customers) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+
             });
     }
 }

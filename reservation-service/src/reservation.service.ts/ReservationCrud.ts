@@ -42,7 +42,12 @@ export default class ReservationssCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
                 break;
+            case "readCustomers":
+                this.readCustomersPerFlight(this.payload.getArguments());
+                break;
+
             case "delete":
                 console.log("INFO: delete Method activated ");
                 break;
@@ -71,7 +76,29 @@ export default class ReservationssCrud {
         console.log(reservations);
     }
 
-    // update()  {}
+    public update(data: any) {
 
+        return this.reservationRepo.update(data)
+            .then(async (document: any) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(document) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+
+            });
+    }
+
+    public readCustomersPerFlight(data: any) {
+        return this.reservationRepo.findCustomersInFlight(data)
+            .then(async (users_in_flight: any) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(users_in_flight) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+
+            });
+    }
     // delete() {}
 }

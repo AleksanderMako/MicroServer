@@ -8,6 +8,7 @@ export default class UserRepository implements Irepository {
 
     private mongooseConection: any;
     private Model: mongoose.Model<any>;
+    private readBYusernameParseIfNeeded: any;
 
     constructor(mongooseConection: any, Schema: mongoose.Schema) {
         this.mongooseConection = mongooseConection;
@@ -64,7 +65,7 @@ export default class UserRepository implements Irepository {
     public readOne(data: any) {
         return new Promise((resolve, reject) => {
 
-            this.Model.findOne({ "username": `${data.id}` }, (err, user) => {
+            this.Model.findOne({ "username": `${data.username}` }, (err, user) => {
 
                 if (err) {
                     reject(err);
@@ -123,6 +124,29 @@ export default class UserRepository implements Irepository {
             );
         });
 
+    }
+
+    public readByUsernames(data: any) {
+
+        this.readBYusernameParseIfNeeded = data;
+        console.log( this.readBYusernameParseIfNeeded);
+        const query = this.Model
+            .find()
+            .where("username")
+            .in(this.readBYusernameParseIfNeeded.map((object: any) => {
+                return object.username;
+            }));
+        return new Promise((resolve, reject) => {
+            query.exec((err, documents) => {
+
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(documents);
+                }
+            });
+
+        });
     }
 
 

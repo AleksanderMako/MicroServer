@@ -16,36 +16,24 @@ exports.makeReservationSchema = () => {
                 message: "flightNumber is too short must be longer than 4 characters ",
             }
         },
-        departure: {
+        username: {
             type: String,
-            required: [true, "departure is required "],
+            required: [true, "username is required "],
             validate: {
                 validator: function (v) {
                     if (v.length <= 4) {
                         return false;
                     }
                 },
-                message: "departure is too short must be longer than 4 characters ",
+                message: "username is too short must be longer than 4 characters ",
             }
-        },
-        destination: {
-            type: String,
-            required: true
-        },
-        firstname: {
-            type: String,
-            required: true
-        },
-        lastname: {
-            type: String,
-            required: true,
         },
         seatNumber: {
             type: String,
-            required: false
+            required: [false, "seatnumber is required"]
         }
     });
-    reservationSchema.index({ flightNumber: 1 }, { unique: true });
+    reservationSchema.index({ flightNumber: 1, username: 1 }, { unique: true });
     return reservationSchema;
 };
 //# sourceMappingURL=ReservationSchema.js.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"updateReservationPayload.js","sourceRoot":"","sources":["../../src/types/updateReservationPayload.ts"],"names":[],"mappings":";;AACA,MAAqB,wBAAwB;IAIzC,YAAY,YAAoB,EAAE,QAAgB;QAE9C,IAAI,CAAC,YAAY,GAAG,YAAY,CAAC;QACjC,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;IAC7B,CAAC;CAEJ;AAVD,2CAUC"}

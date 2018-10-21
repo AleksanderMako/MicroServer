@@ -36,6 +36,10 @@ class ReservationssCrud {
                 break;
             case "update":
                 console.log("INFO: update Method activated ");
+                this.update(this.payload.getArguments());
+                break;
+            case "readCustomers":
+                this.readCustomersPerFlight(this.payload.getArguments());
                 break;
             case "delete":
                 console.log("INFO: delete Method activated ");
@@ -61,6 +65,24 @@ class ReservationssCrud {
             yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(reservations) });
             console.log(reservations);
         });
+    }
+    update(data) {
+        return this.reservationRepo.update(data)
+            .then((document) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(document) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    readCustomersPerFlight(data) {
+        return this.reservationRepo.findCustomersInFlight(data)
+            .then((users_in_flight) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(users_in_flight) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+        }));
     }
 }
 exports.default = ReservationssCrud;

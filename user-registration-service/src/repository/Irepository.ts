@@ -4,4 +4,5 @@ export default interface Irepository {
     readOne(id: any): any;
     update(data: any): any;
     delete(id: any): any;
+    readByUsernames(data: any): any;
 }

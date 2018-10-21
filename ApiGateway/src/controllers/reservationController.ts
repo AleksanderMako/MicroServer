@@ -36,45 +36,105 @@ export class ReservationController {
     public initControllerRoutes() {
         this.controllerRouterObject = Router();
         this.controllerRouterObject.post("/book", async (req: Request, res: Response, next: any) => {
+            if (req.body.functionName.toString() !== "readOne") {
+                res.send("Must call book method");
+            } else {
+                const payload = req.body;
+                console.log("****************************************************************************************");
 
-            const payload = req.body;
-            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-            /// get the user from the db by unique username
-            await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
-            await this.KafkaManager.startConsumer(this.consumer);
-            const user = this.KafkaManager.getMessage();
-            console.log(user.successStatus);
-            /// get flight number from the service
-            await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
-            await this.KafkaManager.startConsumer(this.flightCrudConsumer);
-            const flight = this.KafkaManager.getMessage();
-            console.log(flight.successStatus);
+                console.log(payload.args.seatNumber);
+                console.log("****************************************************************************************");
 
-            /// send payload to reservation service
-            const reservationResponse = {
-                flight: flight.successStatus,
-                user: user.successStatus
-            };
-            const reservationsPayload = {
-                functionName: "create",
-                args: reservationResponse
-            };
-            const kafkaReservationsPayload = Payload.getPayload(reservationsPayload.functionName, reservationsPayload.args);
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                /// get the user from the db by unique username
+                await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.consumer);
+                const user = this.KafkaManager.getMessage();
+                console.log(user.successStatus);
+                /// get flight number from the service
+                await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.flightCrudConsumer);
+                const flight = this.KafkaManager.getMessage();
+                console.log(flight.successStatus);
 
-            await this.KafkaManager.publishMessage("reservations", kafkaReservationsPayload);
-            await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
-            const reservation = this.KafkaManager.getMessage();
-            console.log(reservation.successStatus);
+                /// send payload to reservation service
+                const reservationResponse = {
+                    flight: flight.successStatus,
+                    user: user.successStatus,
+                    seatNumber: payload.args.seatNumber
+                };
+                const reservationsPayload = {
+                    functionName: "create",
+                    args: reservationResponse
+                };
+                const kafkaReservationsPayload = Payload.getPayload(reservationsPayload.functionName, reservationsPayload.args);
 
-            res.send(reservation.successStatus);
+                await this.KafkaManager.publishMessage("reservations", kafkaReservationsPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservation = this.KafkaManager.getMessage();
+                console.log(reservation.successStatus);
+
+                res.send(reservation.successStatus);
+            }
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
+            if (req.body.functionName.toString() !== "read") {
+                res.send("Must call read method ");
+            } else {
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("reservations", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservations = this.KafkaManager.getMessage();
 
-            const payload = req.body;
-            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-            await this.KafkaManager.publishMessage("reservations", kafkaPayload);
-            res.send("object recieved");
+                res.send(reservations.successStatus);
+            }
+
+
+        });
+        this.controllerRouterObject.post("/update", async (req: Request, res: Response, next: any) => {
+
+            if (req.body.functionName.toString() !== "update") {
+                res.send("Must call update method ");
+            } else {
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("reservations", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservations = this.KafkaManager.getMessage();
+
+                res.send((reservations.successStatus));
+            }
+
+
+        });
+        this.controllerRouterObject.post("/readCustomers", async (req: Request, res: Response, next: any) => {
+
+            if (req.body.functionName !== "readCustomers") {
+                res.send("Must call readCustomers method ");
+            } else {
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("reservations", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservations = this.KafkaManager.getMessage();
+
+                const customers = JSON.parse(reservations.successStatus.toString());
+                console.log(customers);
+
+                const UsersInflightPayload = Payload.getPayload(payload.functionName, customers);
+                /// get the user from the db by unique username
+                await this.KafkaManager.publishMessage("userCrud", UsersInflightPayload);
+                await this.KafkaManager.startConsumer(this.consumer);
+                const users = this.KafkaManager.getMessage();
+              //  users.successStatus = users.successStatus.map((user: any) => {
+              //      return JSON.parse(user);
+              //  });
+                console.log(typeof JSON.parse(users.successStatus));
+                res.send(JSON.parse(users.successStatus));
+            }
+
 
         });
     }

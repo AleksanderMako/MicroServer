@@ -1,7 +1,8 @@
 export default interface Irepository {
     create(data: any): any;
     readAll(): any;
-    // readOne(id: any): any;
-    // update(): any;
+    //  readOne(data: any): any;
+    update(data: any): any;
     // delete(): any;
+    findCustomersInFlight(data: any): any;
 }

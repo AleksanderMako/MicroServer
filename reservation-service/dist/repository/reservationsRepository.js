@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const updateReservationPayload_1 = require("../types/updateReservationPayload");
 class ReservationsRepository {
     constructor(mongooseConection, Schema) {
         this.mongooseConection = mongooseConection;
@@ -10,15 +11,13 @@ class ReservationsRepository {
         this.Model = model;
     }
     create(data) {
+        console.log(data.seatNumber);
         this.userPayload = JSON.parse(data.user);
         this.flightPayload = JSON.parse(data.flight);
         const reservation = new this.Model({
             flightNumber: this.flightPayload.flightNumber,
-            departure: this.flightPayload.departure,
-            destination: this.flightPayload.destination,
-            firstname: this.userPayload.firstname,
-            lastname: this.userPayload.lastName,
-            seatNumber: ""
+            username: this.userPayload.username,
+            seatNumber: data.seatNumber
         });
         return new Promise((resolve, reject) => {
             reservation.save((err) => {
@@ -41,6 +40,41 @@ class ReservationsRepository {
                 }
                 else {
                     resolve(users);
+                }
+            });
+        });
+    }
+    update(data) {
+        this.UpdateResrvationPayload = new updateReservationPayload_1.default(data.flightNumber, data.username);
+        return new Promise((resolve, reject) => {
+            this.Model.findOneAndUpdate({
+                username: this.UpdateResrvationPayload.username,
+                flightNumber: this.UpdateResrvationPayload.flightnumber
+            }, {
+                $set: {
+                    seatNumber: data.seatNumber
+                }
+            }, { runValidators: true, new: true }, (err, document) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(document);
+                }
+            });
+        });
+    }
+    findCustomersInFlight(data) {
+        const query = this.Model.find()
+            .where("flightNumber").equals(data.flightNumber);
+        query.select("username -_id");
+        return new Promise((resolve, reject) => {
+            query.exec((err, documents) => {
+                if (err) {
+                    reject(err);
+                }
+                else {
+                    resolve(documents);
                 }
             });
         });
