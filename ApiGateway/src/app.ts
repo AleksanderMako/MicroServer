@@ -1,7 +1,8 @@
 import * as express from "express";
 import * as bodyParser from "body-parser";
 import ApiRouter from "./routes";
-
+import * as passport from "passport";
+import * as strategy from "./authentication/jwtAuthentication";
 export default class App {
 
 
@@ -19,6 +20,8 @@ export default class App {
     private middleware() {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+        passport.use(strategy.strategy);
+        this.app.use(passport.initialize());
     }
 
     public getApp() {
