@@ -42,12 +42,17 @@ export class UserController {
         });
         this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }),
             async (req: Request, res: Response, next: any) => {
+                console.log("********************************************************************************************");
+                console.log("read route activated ");
 
                 const payload = req.body;
                 const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
                 await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
+                console.log("read route finished ");
+                console.log("********************************************************************************************");
+
                 res.send(operationStatus.successStatus);
 
             });

@@ -20,12 +20,19 @@ const opts = {
 };
 export const strategy = new jwtStrategy(opts, async (payload, next) => {
     // TODO get user from db
+    console.log("********************************************************************************************");
+    console.log("jwt protection activated ");
+
     const args = {
-        username: payload.username,
+        username: payload.args.username,
     };
     const queryPayload = Payload.getPayload("readOne", args);
     await kafkaManger.publishMessage("userCrud", queryPayload);
     await kafkaManger.startConsumer(consumer);
     const user = kafkaManger.getMessage();
-    next(null, user);
+    console.log("jwt protection finished ");
+
+    console.log("********************************************************************************************");
+
+    next(null, payload);
 });

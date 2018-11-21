@@ -35,7 +35,6 @@ export class FlightController {
             await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
-            //  console.log(operationStatus.messageStatus);
             res.send(operationStatus.successStatus);
 
         });

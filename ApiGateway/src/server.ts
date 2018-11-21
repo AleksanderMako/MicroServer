@@ -6,6 +6,7 @@ import app from "./app";
 import { Application } from "express";
 import { FlightController } from "./controllers/flightController";
 import { ReservationController } from "./controllers/reservationController";
+import { LoginController } from "./controllers/loginController";
 
 dotenv.config({ path: ".env" });
 
@@ -14,6 +15,7 @@ export class Server {
     private FlightController: FlightController;
     private ReservationController: ReservationController;
     private applicationObject: Application;
+    private loginController: LoginController;
 
     constructor() {
 
@@ -25,7 +27,8 @@ export class Server {
         this.UserController = new UserController();
         this.FlightController = new FlightController();
         this.ReservationController = new ReservationController();
-        const apiRoutes = new routes(this.UserController, this.FlightController, this.ReservationController);
+        this.loginController = new LoginController();
+        const apiRoutes = new routes(this.UserController, this.FlightController, this.ReservationController, this.loginController);
         this.applicationObject = new app(apiRoutes).getApp();
         this.applicationObject.set("port", 4000);
         console.log("INFO:Init method completed");
