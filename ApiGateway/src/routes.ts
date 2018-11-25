@@ -42,5 +42,6 @@ export default class ApiRouter {
         this.router.use("/flight", this.FlightController.getFlightControllerRouterObject());
         this.router.use("/reservation", this.ReservationController.getReservationControllerRouterObject());
         this.router.use("/login/authenticate", this.loginController.getRouter());
+
     }
 }

@@ -31,7 +31,7 @@ export const strategy = new jwtStrategy(opts, async (payload, next) => {
     await kafkaManger.startConsumer(consumer);
     const user = kafkaManger.getMessage();
     console.log("jwt protection finished ");
-
+    // TODO: pass err when user not found
     console.log("********************************************************************************************");
 
     next(null, payload);

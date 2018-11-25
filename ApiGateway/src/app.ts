@@ -22,6 +22,7 @@ export default class App {
         this.app.use(bodyParser.urlencoded({ extended: false }));
         passport.use(strategy.strategy);
         this.app.use(passport.initialize());
+
     }
 
     public getApp() {

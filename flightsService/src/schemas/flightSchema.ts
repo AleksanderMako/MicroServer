@@ -41,13 +41,7 @@ export const makeFlightSchema = () => {
             type: Number,
             required: true,
             min: 1,
-            max: 200,
-            validate: {
-                validator: function (v: any) {
-                    return v % 10 !== 0;
-                },
-                message: `This is not a valid capacity `
-            }
+            max: 600,
         }
 
     });

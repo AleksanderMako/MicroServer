@@ -20,6 +20,11 @@ export class LoginController {
     }
     private initLoginRoute() {
         this.loginControllerObject = Router();
+        this.loginControllerObject.use(function (req: Request, res: Response, next: any) {
+            res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        });
         this.loginControllerObject.post("/user", async (req: Request, res: Response) => {
             const payload = req.body;
             if (!req.body) {
@@ -35,7 +40,11 @@ export class LoginController {
                 res.status(400).send("user not found ");
             }
             const token = jwt.sign(payload, "process.env.SECRET");
-            res.send(token);
+            res.cookie("loginID", token, { httpOnly: true });
+            res.json({
+                status: "logged In",
+                token: token
+            });
 
         });
 

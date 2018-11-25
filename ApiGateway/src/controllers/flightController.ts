@@ -28,6 +28,11 @@ export class FlightController {
 
     public initControllerRoutes() {
         this.controllerRouterObject = Router();
+        this.controllerRouterObject.use(function (req: Request, res: Response, next: any) {
+            res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        });
         this.controllerRouterObject.post("/register", async (req: Request, res: Response, next: any) => {
 
             const payload = req.body;
@@ -35,7 +40,7 @@ export class FlightController {
             await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
-            res.send(operationStatus.successStatus);
+            res.send(operationStatus);
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
