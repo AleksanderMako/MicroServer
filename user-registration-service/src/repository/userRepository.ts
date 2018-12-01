@@ -3,6 +3,7 @@ import * as util from "util";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
 import { rejects } from "assert";
+import UserCrudDTO from "../userServiceDTOS/userCrudDTO";
 
 export default class UserRepository implements Irepository {
 
@@ -52,10 +53,22 @@ export default class UserRepository implements Irepository {
             this.Model.find({}, (err, users) => {
 
                 if (err) {
-                    reject(err);
+                    const responseDto: UserCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: "failed to read customers"
+                    };
+                    reject(responseDto);
 
                 } else {
-                    resolve(users);
+                    const responseDto: UserCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: users
+                    };
+                    resolve(responseDto);
                 }
             });
         });
@@ -68,9 +81,21 @@ export default class UserRepository implements Irepository {
             this.Model.findOne({ "username": `${data.username}` }, (err, user) => {
 
                 if (err) {
-                    reject(err);
+                    const responseDto: UserCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: "failed to read customer"
+                    };
+                    reject(responseDto);
                 } else {
-                    resolve(user);
+                    const responseDto: UserCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: user
+                    };
+                    resolve(responseDto);
                 }
             });
         });
@@ -87,7 +112,6 @@ export default class UserRepository implements Irepository {
                 { "username": data.username },
                 {
                     $set: {
-                        password: data.password,
                         firstname: data.firstname,
                         lastName: data.lastName,
                         age: data.age
@@ -95,10 +119,22 @@ export default class UserRepository implements Irepository {
                 }, { runValidators: true, new: true }, (err, document) => {
 
                     if (err) {
-                        reject(err);
+                        const responseDto: UserCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: "failed to update customer"
+                        };
+                        reject(responseDto);
                     } else {
+                        const responseDto: UserCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
                         console.log(document);
-                        resolve(document);
+                        resolve(responseDto);
                     }
                 });
         });
@@ -116,9 +152,21 @@ export default class UserRepository implements Irepository {
                 { "username": data.username },
                 (err, document) => {
                     if (err) {
-                        reject(err);
+                        const responseDto: UserCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: "failed to delete customer"
+                        };
+                        reject(responseDto);
                     } else {
-                        resolve(document);
+                        const responseDto: UserCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
+                        resolve(responseDto);
                     }
                 }
             );
@@ -129,7 +177,7 @@ export default class UserRepository implements Irepository {
     public readByUsernames(data: any) {
 
         this.readBYusernameParseIfNeeded = data;
-        console.log( this.readBYusernameParseIfNeeded);
+        console.log(this.readBYusernameParseIfNeeded);
         const query = this.Model
             .find()
             .where("username")

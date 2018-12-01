@@ -5,7 +5,7 @@ import * as mongoose from "mongoose";
 import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Irepository from "../repository/Irepository";
-
+import UserCrudDTO from "../userServiceDTOS/userCrudDTO";
 export default class UserCrud {
 
     private payload: Payload;
@@ -54,9 +54,9 @@ export default class UserCrud {
                 this.delete(this.payload.getArguments());
                 break;
             case "readCustomers":
-            console.log("INFO: readCustomers Method activated ");
+                console.log("INFO: readCustomers Method activated ");
 
-            this.readCustomersBy_usernames(this.payload.getArguments());
+                this.readCustomersBy_usernames(this.payload.getArguments());
                 break;
             default: console.log("No method invoked here "); break;
         }
@@ -64,13 +64,26 @@ export default class UserCrud {
     }
 
     public create(args: any) {
+
         return this.userRepo.create(args)
             .then(async () => {
-                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: "success" });
+                const createResponse: UserCrudDTO = {
+                    opStatus: "success",
+                    hasError: false,
+                    error: undefined,
+                    data: args
+                };
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(createResponse) });
             })
             .catch(async (err: Error) => {
+                const createResponse: UserCrudDTO = {
+                    opStatus: "failed",
+                    hasError: true,
+                    error: err,
+                    data: undefined
+                };
                 console.log("ERROR in Crud : " + err);
-                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
+                await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(createResponse) });
             });
     }
 

@@ -6,6 +6,8 @@ import Payload from "../payload";
 import * as passport from "passport";
 import * as passportjwt from "passport-jwt";
 import * as jwt from "jsonwebtoken";
+import LoginResponseDTO from "../api-response-DTOS/login.responseDTO";
+import * as cors from "cors";
 
 export class LoginController {
     private KafkaManager: KafkaManager;
@@ -22,10 +24,10 @@ export class LoginController {
         this.loginControllerObject = Router();
         this.loginControllerObject.use(function (req: Request, res: Response, next: any) {
             res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
-            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept");
             next();
         });
-        this.loginControllerObject.post("/user", async (req: Request, res: Response) => {
+        this.loginControllerObject.post("/user", cors(), async (req: Request, res: Response) => {
             const payload = req.body;
             if (!req.body) {
                 res.status(400).send("empty payload !!");
@@ -36,15 +38,28 @@ export class LoginController {
             const operationStatus = this.KafkaManager.getMessage();
             console.log(operationStatus.successStatus);
 
+            const authenticatedUser = JSON.parse(operationStatus.successStatus);
+            console.log(authenticatedUser);
             if (!operationStatus.successStatus) {
-                res.status(400).send("user not found ");
+                const failLoginDTO: LoginResponseDTO = {
+                    status: "Not logged  In",
+                    token: "",
+                    username: authenticatedUser.username,
+                    hasError: true,
+                    error: "user not found"
+                };
+                res.status(400).json(failLoginDTO);
             }
             const token = jwt.sign(payload, "process.env.SECRET");
-            res.cookie("loginID", token, { httpOnly: true });
-            res.json({
+
+            const successResponse: LoginResponseDTO = {
                 status: "logged In",
-                token: token
-            });
+                token: token,
+                username: authenticatedUser.username,
+                hasError: false,
+                error: null
+            };
+            res.json(successResponse);
 
         });
 

@@ -34,7 +34,7 @@ export default class KafkaManager {
     }
     public async startConsumer(consumer: kafka.ConsumerGroup) {
         this.msg = await this.consumerObject.startConsumer(consumer);
-        this.consumerObject.consume(this.msg);
+         this.consumerObject.consume(this.msg);
     }
     public getData() {
         return this.data;

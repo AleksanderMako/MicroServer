@@ -13,7 +13,7 @@ const ExtractJwt = passportjwt.ExtractJwt;
 const kafkaManger = new KafkaManager();
 kafkaManger.setConsumer(new TestConsumer());
 kafkaManger.setProducer(new TestProducer());
-const consumer = kafkaManger.createConsumerObject("userCrud", "loginConsumer", "loginG1");
+const consumer = kafkaManger.createConsumerObject("userCrudResponce", "loginConsumer", "loginConsumerg2");
 const opts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: "process.env.SECRET"
@@ -30,9 +30,19 @@ export const strategy = new jwtStrategy(opts, async (payload, next) => {
     await kafkaManger.publishMessage("userCrud", queryPayload);
     await kafkaManger.startConsumer(consumer);
     const user = kafkaManger.getMessage();
+    console.log("jwt protection message : ");
+    console.log(user);
+    console.log("jwt protection payload : ");
+
+    console.log(payload);
+
     console.log("jwt protection finished ");
     // TODO: pass err when user not found
     console.log("********************************************************************************************");
+    if (user) {
+        next(null, user);
 
-    next(null, payload);
+    } else {
+        next("user not found ", null);
+    }
 });

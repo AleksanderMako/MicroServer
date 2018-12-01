@@ -6,6 +6,7 @@ import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Payload from "../payload";
 import { TestConsumer } from "../kafkaSoftware/consumer";
+import * as cors from "cors";
 
 
 
@@ -30,10 +31,11 @@ export class UserController {
         this.controllerRouterObject = Router();
         this.controllerRouterObject.use(function (req: Request, res: Response, next: any) {
             res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
-            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-            next ();
+            res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
+            next();
         });
-        this.controllerRouterObject.post("/register", async (req: Request, res: Response, next: any) => {
+        this.controllerRouterObject.post("/register", cors(), async (req: Request, res: Response, next: any) => {
 
             const payload = req.body;
             const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
@@ -47,9 +49,10 @@ export class UserController {
             async (req: Request, res: Response, next: any) => {
                 console.log("********************************************************************************************");
                 console.log("read route activated ");
-
-                const payload = req.body;
-                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                const readPayload = req.body;
+                console.log("read route re.body is : ");
+                console.log(readPayload.args);
+                const kafkaPayload = Payload.getPayload(readPayload.functionName, readPayload.args);
                 await this.KafkaManager.publishMessage("userCrud", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
