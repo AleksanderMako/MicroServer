@@ -1,4 +1,6 @@
 import * as schema from "../schemas/flightSchema";
+import * as seatSchema from "../schemas/seatSchema";
+
 import * as mongoose from "mongoose";
 import FlightsCrud from "./flightCrud";
 import FlightRepository from "../repository/flightsRepository";
@@ -24,8 +26,12 @@ export default class FlightService {
 
     public async connect() {
         try {
+            const SeatSchema = seatSchema.makeSeatSchema();
+
             const flightSchema = schema.makeFlightSchema();
             const flightdb = await mongoose.connect("mongodb://mongodbflight:27018/flights");
+            // const seatTable = await mongoose.connect("mongodb://mongodbflight:27018/seats");
+
             this.flightRepository = new FlightRepository(flightdb, flightSchema);
             console.log("INFO:Successfully conected to mongo DB");
         } catch (Error) {

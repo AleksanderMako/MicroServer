@@ -60,8 +60,8 @@ export default class FlightsCrud {
 
     public create(args: any) {
         return this.flightRepo.create(args)
-            .then(async () => {
-                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
+            .then(async (response: any) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(response) });
             })
             .catch(async (err: Error) => {
                 console.log("Error in crud: " + err);
@@ -73,6 +73,8 @@ export default class FlightsCrud {
 
     public async  read() {
         const flights = await this.flightRepo.readAll();
+        console.log("Flight crud says flight payload is : ");
+        console.log(JSON.stringify (flights));
         await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
         console.log(flights);
     }

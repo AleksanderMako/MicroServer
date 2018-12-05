@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const schema = require("../schemas/flightSchema");
+const seatSchema = require("../schemas/seatSchema");
 const mongoose = require("mongoose");
 const flightCrud_1 = require("./flightCrud");
 const flightsRepository_1 = require("../repository/flightsRepository");
@@ -25,8 +26,10 @@ class FlightService {
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const SeatSchema = seatSchema.makeSeatSchema();
                 const flightSchema = schema.makeFlightSchema();
                 const flightdb = yield mongoose.connect("mongodb://mongodbflight:27018/flights");
+                // const seatTable = await mongoose.connect("mongodb://mongodbflight:27018/seats");
                 this.flightRepository = new flightsRepository_1.default(flightdb, flightSchema);
                 console.log("INFO:Successfully conected to mongo DB");
             }

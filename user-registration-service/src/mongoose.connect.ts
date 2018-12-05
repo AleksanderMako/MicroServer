@@ -11,11 +11,11 @@ import UserRepository from "./repository/userRepository";
 let db: any;
 let userSchema: mongoose.Schema;
 let userRepositoryObject: UserRepository;
-
+let userService: UserCrud;
 const initCrudService = (connection: any, payload: Payload) => {
 
-    const userService = new UserCrud(payload, userRepositoryObject);
-    userService.init();
+    // init should be taking the payload
+    userService.init(payload);
 };
 
 const connect = async () => {
@@ -24,10 +24,11 @@ const connect = async () => {
 
         userSchema = schema.makeUserSchema();
         db = await mongoose.connect("mongodb://mongoDB:27017/user");
-        userRepositoryObject = new UserRepository(db, userSchema);
-
-
         console.log("Connected");
+        userRepositoryObject = new UserRepository(db, userSchema);
+        userService = new UserCrud( userRepositoryObject);
+
+
 
 
     } catch (err) {

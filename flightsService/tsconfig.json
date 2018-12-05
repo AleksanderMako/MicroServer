@@ -18,7 +18,7 @@
         }
     },
     "include": [
-        "./src/**/*.ts", "src/cacheService/cache.js"
+        "./src/**/*.ts"
     ],
     "exclude": [
         "node_modules/*",

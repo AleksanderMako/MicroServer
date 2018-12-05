@@ -54,8 +54,8 @@ class FlightsCrud {
     }
     create(args) {
         return this.flightRepo.create(args)
-            .then(() => __awaiter(this, void 0, void 0, function* () {
-            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: "success" });
+            .then((response) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(response) });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
             console.log("Error in crud: " + err);
@@ -66,6 +66,8 @@ class FlightsCrud {
     read() {
         return __awaiter(this, void 0, void 0, function* () {
             const flights = yield this.flightRepo.readAll();
+            console.log("Flight crud says flight payload is : ");
+            console.log(JSON.stringify(flights));
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
             console.log(flights);
         });

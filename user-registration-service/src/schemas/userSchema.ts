@@ -42,12 +42,10 @@ export const makeUserSchema = () => {
             required: true,
             min: 1,
             max: 99,
-            validate: {
-                validator: function (v: any) {
-                    return v % 10 !== 0;
-                },
-                message: `This is not a valid age `
-            }
+
+        },
+        typeOfUser: {
+            type: String
         }
 
     });

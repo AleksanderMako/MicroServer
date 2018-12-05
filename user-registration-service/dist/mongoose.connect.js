@@ -18,16 +18,18 @@ const userRepository_1 = require("./repository/userRepository");
 let db;
 let userSchema;
 let userRepositoryObject;
+let userService;
 const initCrudService = (connection, payload) => {
-    const userService = new userCrud_1.default(payload, userRepositoryObject);
-    userService.init();
+    // init should be taking the payload
+    userService.init(payload);
 };
 const connect = () => __awaiter(this, void 0, void 0, function* () {
     try {
         userSchema = schema.makeUserSchema();
         db = yield mongoose.connect("mongodb://mongoDB:27017/user");
-        userRepositoryObject = new userRepository_1.default(db, userSchema);
         console.log("Connected");
+        userRepositoryObject = new userRepository_1.default(db, userSchema);
+        userService = new userCrud_1.default(userRepositoryObject);
     }
     catch (err) {
         console.log(err);

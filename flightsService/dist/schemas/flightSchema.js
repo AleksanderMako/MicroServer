@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
+const seatSchema_1 = require("./seatSchema");
+const seat = seatSchema_1.makeSeatSchema();
 exports.makeFlightSchema = () => {
     const schema = mongoose.Schema;
     const flightSchema = new schema({
@@ -41,7 +43,8 @@ exports.makeFlightSchema = () => {
             required: true,
             min: 1,
             max: 600,
-        }
+        },
+        seats: [seat]
     });
     flightSchema.index({ flightNumber: 1 }, { unique: true });
     return flightSchema;

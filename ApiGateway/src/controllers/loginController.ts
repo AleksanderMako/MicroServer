@@ -44,9 +44,10 @@ export class LoginController {
                 const failLoginDTO: LoginResponseDTO = {
                     status: "Not logged  In",
                     token: "",
-                    username: authenticatedUser.username,
+                    username: authenticatedUser.data.username,
                     hasError: true,
-                    error: "user not found"
+                    error: "user not found",
+                    typeOfUser: null
                 };
                 res.status(400).json(failLoginDTO);
             }
@@ -55,9 +56,10 @@ export class LoginController {
             const successResponse: LoginResponseDTO = {
                 status: "logged In",
                 token: token,
-                username: authenticatedUser.username,
+                username: authenticatedUser.data.username,
                 hasError: false,
-                error: null
+                error: null,
+                typeOfUser: authenticatedUser.data.typeOfUser
             };
             res.json(successResponse);
 

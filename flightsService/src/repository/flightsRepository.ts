@@ -1,6 +1,7 @@
 import * as userSchema from "../schemas/flightSchema";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
+import FlightCrudDTO from "../flightCrudDTOs/flightCrudDTO";
 
 export default class FlightRepository implements Irepository {
 
@@ -16,14 +17,40 @@ export default class FlightRepository implements Irepository {
     public setModel(model: mongoose.Model<any>) {
         this.Model = model;
     }
-
+    // for demo purposes seat management is seeded with sample seats
     public create(data: any) {
         const flight = new this.Model({
             flightNumber: data.flightNumber,
             departure: data.departure,
             destination: data.destination,
             airplaneType: data.airplaneType,
-            capacity: data.capacity
+            capacity: data.capacity,
+            seats: [{
+                row: 1,
+                column: "A",
+                SeatIDS: "A1",
+                status: "free"
+            }, {
+                row: 1,
+                column: "B",
+                SeatIDS: "B1",
+                status: "free"
+            }, {
+                row: 1,
+                column: "C",
+                SeatIDS: "C1",
+                status: "free"
+            }, {
+                row: 2,
+                column: "A",
+                SeatIDS: "A2",
+                status: "free"
+            }, {
+                row: 2,
+                column: "B",
+                SeatIDS: "B2",
+                status: "free"
+            }]
         });
 
         // const error: Error = flight.validateSync();
@@ -31,11 +58,23 @@ export default class FlightRepository implements Irepository {
             flight.save((err: Error) => {
 
                 if (err) {
+                    const flightErrorResponse: FlightCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
                     console.log("ERROR Inside promise:" + err);
-                    reject(err);
+                    reject(flightErrorResponse);
 
                 } else {
-                    resolve();
+                    const flightSuccessResponse: FlightCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: undefined
+                    };
+                    resolve(flightSuccessResponse);
                     console.log("INFO:Success");
 
                 }
@@ -51,10 +90,22 @@ export default class FlightRepository implements Irepository {
             this.Model.find({}, (err, users) => {
 
                 if (err) {
-                    reject(err);
+                    const flightErrorResponse: FlightCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(flightErrorResponse);
 
                 } else {
-                    resolve(users);
+                    const flightSuccessResponse: FlightCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: users
+                    };
+                    resolve(flightSuccessResponse);
                 }
             });
         });
@@ -66,8 +117,20 @@ export default class FlightRepository implements Irepository {
             this.Model.findOne({ "flightNumber": `${data.flightNumber}` }, (err, user) => {
 
                 if (err) {
-                    reject(err);
+                    const flightErrorResponse: FlightCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(flightErrorResponse);
                 } else {
+                    const flightSuccessResponse: FlightCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: user
+                    };
                     resolve(user);
                 }
             });
@@ -94,9 +157,21 @@ export default class FlightRepository implements Irepository {
                     new: true
                 }, (err, document) => {
                     if (err) {
-                        reject(err);
+                        const flightErrorResponse: FlightCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: undefined
+                        };
+                        reject(flightErrorResponse);
                     } else {
-                        resolve(document);
+                        const flightSuccessResponse: FlightCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
+                        resolve(flightSuccessResponse);
                     }
                 }
             );
@@ -108,16 +183,32 @@ export default class FlightRepository implements Irepository {
         return new Promise((resolve, reject) => {
 
             this.Model.findOneAndRemove(
-                {  "flightNumber": data.flightNumber },
+                { "flightNumber": data.flightNumber },
                 (err, document) => {
                     if (err) {
-                        reject(err);
+                        const flightErrorResponse: FlightCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: undefined
+                        };
+                        reject(flightErrorResponse);
                     } else {
-                        resolve(document);
+                        const flightSuccessResponse: FlightCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
+                        resolve(flightSuccessResponse);
                     }
                 }
             );
         });
+
+    }
+
+    public seedSeats() {
 
     }
 

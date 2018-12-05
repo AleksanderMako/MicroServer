@@ -5,4 +5,6 @@ export default interface Irepository {
     update(data: any): any;
     delete(id: any): any;
     readByUsernames(data: any): any;
+    seedAdmin(data: any): any;
+
 }

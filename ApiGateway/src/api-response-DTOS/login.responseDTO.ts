@@ -5,4 +5,5 @@ export default class LoginResponseDTO {
     public username?: string;
     public hasError: boolean;
     public error: any;
+    public typeOfUser?: string;
 }

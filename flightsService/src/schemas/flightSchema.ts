@@ -1,4 +1,6 @@
 import * as mongoose from "mongoose";
+import { makeSeatSchema } from "./seatSchema";
+const seat = makeSeatSchema();
 export const makeFlightSchema = () => {
     const schema = mongoose.Schema;
     const flightSchema = new schema({
@@ -42,7 +44,8 @@ export const makeFlightSchema = () => {
             required: true,
             min: 1,
             max: 600,
-        }
+        },
+        seats: [seat]
 
     });
     flightSchema.index({ flightNumber: 1 }, { unique: true });

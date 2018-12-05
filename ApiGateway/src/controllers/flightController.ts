@@ -30,7 +30,8 @@ export class FlightController {
         this.controllerRouterObject = Router();
         this.controllerRouterObject.use(function (req: Request, res: Response, next: any) {
             res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
-            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
             next();
         });
         this.controllerRouterObject.post("/register", async (req: Request, res: Response, next: any) => {
@@ -51,7 +52,7 @@ export class FlightController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
 
-            res.send(operationStatus.successStatus);
+            res.send(operationStatus);
 
         });
         this.controllerRouterObject.post("/update", async (req: Request, res: Response, next: any) => {

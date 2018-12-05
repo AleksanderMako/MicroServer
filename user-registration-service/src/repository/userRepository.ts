@@ -20,13 +20,41 @@ export default class UserRepository implements Irepository {
         this.Model = model;
     }
 
+    public seedAdmin(admin: any) {
+        const user = new this.Model({
+            username: admin.username,
+            password: admin.password,
+            firstname: admin.firstname,
+            lastName: admin.lastName,
+            age: admin.age,
+            typeOfUser: admin.typeOfUser
+        });
+
+        // const error: Error = user.validateSync();
+        return new Promise((resolve, reject) => {
+            user.save((err: Error) => {
+
+                if (err) {
+                    console.log("ERROR Inside Promise:" + err);
+                    reject(err);
+
+                } else {
+                    resolve();
+                    console.log("INFO:Success");
+
+                }
+            });
+        });
+    }
+
     public create(data: any) {
         const user = new this.Model({
             username: data.username,
             password: data.password,
             firstname: data.firstname,
             lastName: data.lastName,
-            age: data.age
+            age: data.age,
+            typeOfUser: "simple"
         });
 
         // const error: Error = user.validateSync();
@@ -50,7 +78,7 @@ export default class UserRepository implements Irepository {
     public readAll() {
         return new Promise((resolve, reject) => {
 
-            this.Model.find({}, (err, users) => {
+            this.Model.find({ "typeOfUser": "simple" }, (err, users) => {
 
                 if (err) {
                     const responseDto: UserCrudDTO = {

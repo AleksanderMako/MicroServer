@@ -13,15 +13,15 @@ export default class UserCrud {
     private args: any;
     private userRepo: Irepository;
     private KafkaManager: KafkaManager;
-    constructor(payload: any, userRepositoryObject: Irepository) {
+    constructor(userRepositoryObject: Irepository) {
 
-        this.payload = Payload.getPayload(payload.functionName, payload.args);
         this.userRepo = userRepositoryObject;
+        this.initAdminPersonel();
         this.KafkaManager = new KafkaManager();
         this.KafkaManager.setProducer(new TestProducer());
     }
-    public init() {
-
+    public init(payload: any) {
+        this.payload = Payload.getPayload(payload.functionName, payload.args);
         this.functionName = this.payload.getFucnName();
         switch (this.functionName) {
 
@@ -135,6 +135,27 @@ export default class UserCrud {
             .catch(async (err: Error) => {
                 await this.KafkaManager.publishMessage("userCrudResponce", { successStatus: JSON.stringify(err) });
 
+            });
+    }
+
+    private initAdminPersonel() {
+
+        const admin1 = {
+            username: "admin1",
+            firstname: "adminName",
+            lastName: "adminLastname",
+            password: "admin1",
+            typeOfUser: "admin",
+            age: 30
+        };
+
+        return this.userRepo.seedAdmin(admin1)
+            .then(() => {
+
+            })
+            .catch((err: Error) => {
+                console.log("Error while initializing admin identity ");
+                console.log("err:" + JSON.stringify(err));
             });
     }
 }
