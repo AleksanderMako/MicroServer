@@ -209,7 +209,7 @@ export default class UserRepository implements Irepository {
         const query = this.Model
             .find()
             .where("username")
-            .in(this.readBYusernameParseIfNeeded.map((object: any) => {
+            .in(this.readBYusernameParseIfNeeded.data.map((object: any) => {
                 return object.username;
             }));
         return new Promise((resolve, reject) => {

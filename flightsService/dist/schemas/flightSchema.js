@@ -44,6 +44,10 @@ exports.makeFlightSchema = () => {
             min: 1,
             max: 600,
         },
+        Date: {
+            type: Date,
+            required: true,
+        },
         seats: [seat]
     });
     flightSchema.index({ flightNumber: 1 }, { unique: true });

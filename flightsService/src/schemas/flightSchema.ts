@@ -45,6 +45,10 @@ export const makeFlightSchema = () => {
             min: 1,
             max: 600,
         },
+        Date: {
+            type: Date,
+            required: true,
+        },
         seats: [seat]
 
     });

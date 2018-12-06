@@ -35,6 +35,12 @@ export class ReservationController {
 
     public initControllerRoutes() {
         this.controllerRouterObject = Router();
+        this.controllerRouterObject.use(function (req: Request, res: Response, next: any) {
+            res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+            res.setHeader("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
+            res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
+            next();
+        });
         this.controllerRouterObject.post("/book", async (req: Request, res: Response, next: any) => {
             if (req.body.functionName.toString() !== "readOne") {
                 res.send("Must call book method");
@@ -72,18 +78,27 @@ export class ReservationController {
                 await this.KafkaManager.publishMessage("reservations", kafkaReservationsPayload);
                 await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
                 const reservation = this.KafkaManager.getMessage();
+                console.log("reservation response *****************************************************************************************************");
+
                 console.log(reservation.successStatus);
 
+                //   update seat
+                const kafkaPayloadForSeat = Payload.getPayload("updateSeat", payload.args);
+
+                await this.KafkaManager.publishMessage("flightCrud", kafkaPayloadForSeat);
+                await this.KafkaManager.startConsumer(this.flightCrudConsumer);
+                const seatUpdate = this.KafkaManager.getMessage();
+                console.log(seatUpdate.successStatus);
                 res.send(reservation.successStatus);
             }
 
         });
         this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
-            if (req.body.functionName.toString() !== "read") {
+            if (req.body.functionName.toString() !== "readReservationsByCustomer") {
                 res.send("Must call read method ");
             } else {
                 const payload = req.body;
-                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                const kafkaPayload = Payload.getPayload("readReservationsByCustomer", payload.args);
                 await this.KafkaManager.publishMessage("reservations", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
                 const reservations = this.KafkaManager.getMessage();
@@ -128,9 +143,9 @@ export class ReservationController {
                 await this.KafkaManager.publishMessage("userCrud", UsersInflightPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const users = this.KafkaManager.getMessage();
-              //  users.successStatus = users.successStatus.map((user: any) => {
-              //      return JSON.parse(user);
-              //  });
+                //  users.successStatus = users.successStatus.map((user: any) => {
+                //      return JSON.parse(user);
+                //  });
                 console.log(typeof JSON.parse(users.successStatus));
                 res.send(JSON.parse(users.successStatus));
             }

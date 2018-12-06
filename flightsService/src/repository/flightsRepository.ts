@@ -25,6 +25,7 @@ export default class FlightRepository implements Irepository {
             destination: data.destination,
             airplaneType: data.airplaneType,
             capacity: data.capacity,
+            Date: data.date,
             seats: [{
                 row: 1,
                 column: "A",
@@ -87,7 +88,7 @@ export default class FlightRepository implements Irepository {
 
         return new Promise((resolve, reject) => {
 
-            this.Model.find({}, (err, users) => {
+            this.Model.find({}, (err, flights) => {
 
                 if (err) {
                     const flightErrorResponse: FlightCrudDTO = {
@@ -103,7 +104,7 @@ export default class FlightRepository implements Irepository {
                         opStatus: "success",
                         hasError: false,
                         error: undefined,
-                        data: users
+                        data: flights
                     };
                     resolve(flightSuccessResponse);
                 }
@@ -208,8 +209,39 @@ export default class FlightRepository implements Irepository {
 
     }
 
-    public seedSeats() {
+    public updateSeatStatus(data: any) {
 
+        return new Promise((resolve, reject) => {
+
+            this.Model.findOneAndUpdate({
+                "flightNumber": data.flightNumber,
+                "seats._id": data._id
+            }, {
+                    $set: {
+                        "seats.$.status": "reserved"
+                    }
+
+                }, (err: any, document: any) => {
+                    if (err) {
+                        const flightErrorResponse: FlightCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: undefined
+                        };
+                        reject(flightErrorResponse);
+                    } else {
+                        const flightSuccessResponse: FlightCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
+                        resolve(flightSuccessResponse);
+                    }
+
+                });
+        });
     }
 
 }

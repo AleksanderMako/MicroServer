@@ -47,6 +47,10 @@ class FlightsCrud {
                 console.log("INFO: delete Method activated ");
                 this.delete(this.payload.getArguments());
                 break;
+            case "updateSeat":
+                console.log("INFO: updateseat  Method activated ");
+                this.updateSeatStatus(this.payload.getArguments());
+                break;
             default:
                 console.log("No method invoked here ");
                 break;
@@ -61,7 +65,6 @@ class FlightsCrud {
             console.log("Error in crud: " + err);
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
         }));
-        // TODO:change the topic for flights publishing
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -92,6 +95,15 @@ class FlightsCrud {
         return this.flightRepo.delete(args)
             .then((deleted) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(deleted) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    updateSeatStatus(args) {
+        return this.flightRepo.updateSeatStatus(args)
+            .then((reservedSead) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(reservedSead) });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });

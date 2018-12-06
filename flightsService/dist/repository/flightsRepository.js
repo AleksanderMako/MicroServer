@@ -17,6 +17,7 @@ class FlightRepository {
             destination: data.destination,
             airplaneType: data.airplaneType,
             capacity: data.capacity,
+            Date: data.date,
             seats: [{
                     row: 1,
                     column: "A",
@@ -72,7 +73,7 @@ class FlightRepository {
     }
     readAll() {
         return new Promise((resolve, reject) => {
-            this.Model.find({}, (err, users) => {
+            this.Model.find({}, (err, flights) => {
                 if (err) {
                     const flightErrorResponse = {
                         opStatus: "error",
@@ -87,7 +88,7 @@ class FlightRepository {
                         opStatus: "success",
                         hasError: false,
                         error: undefined,
-                        data: users
+                        data: flights
                     };
                     resolve(flightSuccessResponse);
                 }
@@ -178,7 +179,36 @@ class FlightRepository {
             });
         });
     }
-    seedSeats() {
+    updateSeatStatus(data) {
+        return new Promise((resolve, reject) => {
+            this.Model.findOneAndUpdate({
+                "flightNumber": data.flightNumber,
+                "seats._id": data._id
+            }, {
+                $set: {
+                    "seats.$.status": "reserved"
+                }
+            }, (err, document) => {
+                if (err) {
+                    const flightErrorResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(flightErrorResponse);
+                }
+                else {
+                    const flightSuccessResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: document
+                    };
+                    resolve(flightSuccessResponse);
+                }
+            });
+        });
     }
 }
 exports.default = FlightRepository;

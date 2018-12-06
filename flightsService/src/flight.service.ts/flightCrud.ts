@@ -53,6 +53,11 @@ export default class FlightsCrud {
                 console.log("INFO: delete Method activated ");
                 this.delete(this.payload.getArguments());
                 break;
+
+            case "updateSeat":
+                console.log("INFO: updateseat  Method activated ");
+                this.updateSeatStatus(this.payload.getArguments());
+                break;
             default: console.log("No method invoked here "); break;
         }
 
@@ -68,13 +73,12 @@ export default class FlightsCrud {
                 await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
 
             });
-        // TODO:change the topic for flights publishing
     }
 
     public async  read() {
         const flights = await this.flightRepo.readAll();
         console.log("Flight crud says flight payload is : ");
-        console.log(JSON.stringify (flights));
+        console.log(JSON.stringify(flights));
         await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(flights) });
         console.log(flights);
     }
@@ -104,6 +108,19 @@ export default class FlightsCrud {
             })
             .catch(async (err: Error) => {
                 await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+            });
+    }
+
+    public updateSeatStatus(args: any) {
+
+        return this.flightRepo.updateSeatStatus(args)
+            .then(async (reservedSead: any) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(reservedSead) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("flightCrudResponse", { successStatus: JSON.stringify(err) });
+
             });
     }
 }

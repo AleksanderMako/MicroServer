@@ -16,6 +16,7 @@ export class UserController {
     private controllerRouterObject: Router;
     private KafkaManager: KafkaManager;
     private consumer: any;
+    private reservationCrudConsumer: any;
     /**
      *
      */
@@ -25,6 +26,8 @@ export class UserController {
         this.KafkaManager.setProducer(new TestProducer());
         this.KafkaManager.setConsumer(new TestConsumer());
         this.consumer = this.KafkaManager.createConsumerObject("userCrudResponce", "id-2", "g2");
+        this.reservationCrudConsumer = this.KafkaManager.createConsumerObject("reservationResponse", "reservationCrudConsumer-4", "reservationCrudConsumerGroup-4");
+
     }
 
     public initControllerRoutes() {
@@ -83,6 +86,14 @@ export class UserController {
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
                 console.log(operationStatus.successStatus);
+                const kafkaReservationPayload = Payload.getPayload("deleteReservationByCustomer", payload.args);
+
+                await this.KafkaManager.publishMessage("reservations", kafkaReservationPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservation = this.KafkaManager.getMessage();
+                console.log("reservation response *****************************************************************************************************");
+
+                console.log(reservation.successStatus);
                 res.send(operationStatus.successStatus);
 
             });

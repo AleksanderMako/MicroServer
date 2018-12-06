@@ -41,6 +41,12 @@ class ReservationssCrud {
             case "readCustomers":
                 this.readCustomersPerFlight(this.payload.getArguments());
                 break;
+            case "deleteReservationByCustomer":
+                this.removeReservationByCustomer(this.payload.getArguments());
+                break;
+            case "readReservationsByCustomer":
+                this.readReservationsByCustomer(this.payload.getArguments());
+                break;
             case "delete":
                 console.log("INFO: delete Method activated ");
                 break;
@@ -51,13 +57,12 @@ class ReservationssCrud {
     }
     create(args) {
         return this.reservationRepo.create(args)
-            .then(() => __awaiter(this, void 0, void 0, function* () {
-            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: "success" });
+            .then((response) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
         }));
-        // TODO:change the topic for flights publishing
     }
     read() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -79,6 +84,25 @@ class ReservationssCrud {
         return this.reservationRepo.findCustomersInFlight(data)
             .then((users_in_flight) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(users_in_flight) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    removeReservationByCustomer(data) {
+        return this.reservationRepo.removeReservationBYCustomer(data)
+            .then((response) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
+        }))
+            .catch((err) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+        }));
+    }
+    readReservationsByCustomer(data) {
+        return this.reservationRepo
+            .findUserReservations(data)
+            .then((response) => __awaiter(this, void 0, void 0, function* () {
+            yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
         }))
             .catch((err) => __awaiter(this, void 0, void 0, function* () {
             yield this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });

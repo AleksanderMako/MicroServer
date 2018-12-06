@@ -47,7 +47,12 @@ export default class ReservationssCrud {
             case "readCustomers":
                 this.readCustomersPerFlight(this.payload.getArguments());
                 break;
-
+            case "deleteReservationByCustomer":
+                this.removeReservationByCustomer(this.payload.getArguments());
+                break;
+            case "readReservationsByCustomer":
+                this.readReservationsByCustomer(this.payload.getArguments());
+                break;
             case "delete":
                 console.log("INFO: delete Method activated ");
                 break;
@@ -59,15 +64,14 @@ export default class ReservationssCrud {
     public create(args: any) {
 
         return this.reservationRepo.create(args)
-            .then(async () => {
-                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: "success" });
+            .then(async (response: any) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
 
             })
             .catch(async (err: Error) => {
                 await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
 
             });
-        // TODO:change the topic for flights publishing
     }
 
     public async  read() {
@@ -100,5 +104,28 @@ export default class ReservationssCrud {
 
             });
     }
-    // delete() {}
+    public removeReservationByCustomer(data: any) {
+        return this.reservationRepo.removeReservationBYCustomer(data)
+            .then(async (response: any) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+
+            });
+    }
+
+    public readReservationsByCustomer(data: any) {
+        return this.reservationRepo
+            .findUserReservations(data)
+            .then(async (response: any) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(response) });
+
+            })
+            .catch(async (err: Error) => {
+                await this.KafkaManager.publishMessage("reservationResponse", { successStatus: JSON.stringify(err) });
+
+            });
+    }
 }

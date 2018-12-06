@@ -5,4 +5,6 @@ export default interface Irepository {
     update(data: any): any;
     // delete(): any;
     findCustomersInFlight(data: any): any;
+    removeReservationBYCustomer(data: any): any;
+    findUserReservations(data: any): any;
 }

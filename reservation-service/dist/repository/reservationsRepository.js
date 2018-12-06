@@ -13,20 +13,39 @@ class ReservationsRepository {
     create(data) {
         console.log(data.seatNumber);
         this.userPayload = JSON.parse(data.user);
+        console.log(JSON.stringify(this.userPayload));
         this.flightPayload = JSON.parse(data.flight);
+        console.log(JSON.stringify(this.flightPayload));
         const reservation = new this.Model({
             flightNumber: this.flightPayload.flightNumber,
-            username: this.userPayload.username,
-            seatNumber: data.seatNumber
+            username: this.userPayload.data.username,
+            seatNumber: data.seatNumber,
+            Departure: this.flightPayload.departure,
+            Destination: this.flightPayload.destination,
+            Date: this.flightPayload.Date,
+            firstname: this.userPayload.data.firstname,
+            lastName: this.userPayload.data.lastName
         });
         return new Promise((resolve, reject) => {
             reservation.save((err) => {
                 if (err) {
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: "success"
+                    };
                     console.log("ERROR Inside Promise:" + err);
-                    reject(err);
+                    reject(errResponse);
                 }
                 else {
-                    resolve();
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: undefined
+                    };
+                    resolve(successResponse);
                     console.log("INFO:Success");
                 }
             });
@@ -36,10 +55,47 @@ class ReservationsRepository {
         return new Promise((resolve, reject) => {
             this.Model.find({}, (err, users) => {
                 if (err) {
-                    reject(err);
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
                 }
                 else {
-                    resolve(users);
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: users
+                    };
+                    resolve(successResponse);
+                }
+            });
+        });
+    }
+    findUserReservations(data) {
+        return new Promise((resolve, reject) => {
+            this.Model
+                .find({ "username": data.username }, (err, documents) => {
+                if (err) {
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
+                }
+                else {
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: documents
+                    };
+                    resolve(successResponse);
                 }
             });
         });
@@ -56,10 +112,49 @@ class ReservationsRepository {
                 }
             }, { runValidators: true, new: true }, (err, document) => {
                 if (err) {
-                    reject(err);
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
                 }
                 else {
-                    resolve(document);
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: document
+                    };
+                    resolve(successResponse);
+                }
+            });
+        });
+    }
+    removeReservationBYCustomer(data) {
+        return new Promise((resolve, reject) => {
+            this.Model
+                .find({ "username": data.username })
+                .remove((err) => {
+                if (err) {
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
+                }
+                else {
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: undefined
+                    };
+                    console.log("Successfully removed reservations for customer ");
+                    resolve(successResponse);
                 }
             });
         });
@@ -71,10 +166,22 @@ class ReservationsRepository {
         return new Promise((resolve, reject) => {
             query.exec((err, documents) => {
                 if (err) {
-                    reject(err);
+                    const errResponse = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
                 }
                 else {
-                    resolve(documents);
+                    const successResponse = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: documents
+                    };
+                    resolve(successResponse);
                 }
             });
         });

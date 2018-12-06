@@ -2,6 +2,7 @@ import * as userSchema from "../schemas/ReservationSchema";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
 import UpdateReservationPayload from "../types/updateReservationPayload";
+import ReserveCrudDTO from "../DTOs/reservationDTO";
 
 export default class ReservationsRepository implements Irepository {
 
@@ -23,22 +24,41 @@ export default class ReservationsRepository implements Irepository {
     public create(data: any) {
         console.log(data.seatNumber);
         this.userPayload = JSON.parse(data.user);
+        console.log(JSON.stringify(this.userPayload));
         this.flightPayload = JSON.parse(data.flight);
+        console.log(JSON.stringify(this.flightPayload));
         const reservation = new this.Model({
             flightNumber: this.flightPayload.flightNumber,
-            username: this.userPayload.username,
-            seatNumber: data.seatNumber
+            username: this.userPayload.data.username,
+            seatNumber: data.seatNumber,
+            Departure: this.flightPayload.departure,
+            Destination: this.flightPayload.destination,
+            Date: this.flightPayload.Date,
+            firstname: this.userPayload.data.firstname,
+            lastName: this.userPayload.data.lastName
         });
 
         return new Promise((resolve, reject) => {
             reservation.save((err: Error) => {
 
                 if (err) {
+                    const errResponse: ReserveCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: "success"
+                    };
                     console.log("ERROR Inside Promise:" + err);
-                    reject(err);
+                    reject(errResponse);
 
                 } else {
-                    resolve();
+                    const successResponse: ReserveCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: undefined
+                    };
+                    resolve(successResponse);
                     console.log("INFO:Success");
 
                 }
@@ -54,18 +74,59 @@ export default class ReservationsRepository implements Irepository {
             this.Model.find({}, (err, users) => {
 
                 if (err) {
-                    reject(err);
+                    const errResponse: ReserveCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
 
                 } else {
-                    resolve(users);
+                    const successResponse: ReserveCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: users
+                    };
+                    resolve(successResponse);
                 }
             });
         });
 
     }
 
+    public findUserReservations(data: any) {
+
+        return new Promise((resolve, reject) => {
+
+            this.Model
+                .find({ "username": data.username },
+                    (err, documents) => {
+                        if (err) {
+
+                            const errResponse: ReserveCrudDTO = {
+                                opStatus: "error",
+                                hasError: true,
+                                error: err,
+                                data: undefined
+                            };
+                            reject(errResponse);
+                        } else {
+                            const successResponse: ReserveCrudDTO = {
+                                opStatus: "success",
+                                hasError: false,
+                                error: undefined,
+                                data: documents
+                            };
+                            resolve(successResponse);
+                        }
+                    });
+        });
+    }
+
     public update(data: any) {
-        this.UpdateResrvationPayload = new UpdateReservationPayload​​(data.flightNumber, data.username);
+        this.UpdateResrvationPayload = new UpdateReservationPayload(data.flightNumber, data.username);
         return new Promise((resolve, reject) => {
 
             this.Model.findOneAndUpdate({
@@ -79,15 +140,55 @@ export default class ReservationsRepository implements Irepository {
 
                 }, { runValidators: true, new: true }, (err, document) => {
                     if (err) {
-                        reject(err);
+                        const errResponse: ReserveCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: undefined
+                        };
+                        reject(errResponse);
                     } else {
-                        resolve(document);
+                        const successResponse: ReserveCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: document
+                        };
+                        resolve(successResponse);
                     }
                 });
         });
 
     }
+    public removeReservationBYCustomer(data: any) {
 
+        return new Promise((resolve, reject) => {
+            this.Model
+                .find({ "username": data.username })
+                .remove((err) => {
+
+                    if (err) {
+                        const errResponse: ReserveCrudDTO = {
+                            opStatus: "error",
+                            hasError: true,
+                            error: err,
+                            data: undefined
+                        };
+                        reject(errResponse);
+                    } else {
+                        const successResponse: ReserveCrudDTO = {
+                            opStatus: "success",
+                            hasError: false,
+                            error: undefined,
+                            data: undefined
+                        };
+                        console.log("Successfully removed reservations for customer ");
+                        resolve(successResponse);
+                    }
+                });
+        });
+
+    }
 
     public findCustomersInFlight(data: any) {
         const query = this.Model.find()
@@ -98,9 +199,21 @@ export default class ReservationsRepository implements Irepository {
 
             query.exec((err, documents) => {
                 if (err) {
-                    reject(err);
+                    const errResponse: ReserveCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
                 } else {
-                    resolve(documents);
+                    const successResponse: ReserveCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: documents
+                    };
+                    resolve(successResponse);
                 }
             });
         });

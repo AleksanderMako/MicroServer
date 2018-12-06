@@ -31,6 +31,26 @@ exports.makeReservationSchema = () => {
         seatNumber: {
             type: String,
             required: [false, "seatnumber is required"]
+        },
+        Departure: {
+            type: String,
+            required: [false, "Departure is required"]
+        },
+        Destination: {
+            type: String,
+            required: [false, "Destination is required"]
+        },
+        Date: {
+            type: Date,
+            required: [false, "Date is required"]
+        },
+        firstname: {
+            type: String,
+            required: [false, "firstname is required"]
+        },
+        lastName: {
+            type: String,
+            required: [false, "lastName is required"]
         }
     });
     reservationSchema.index({ flightNumber: 1, username: 1 }, { unique: true });
