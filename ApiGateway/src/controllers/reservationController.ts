@@ -6,8 +6,7 @@ import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Payload from "../payload";
 import { TestConsumer } from "../kafkaSoftware/consumer";
-
-
+import * as passport from "passport";
 
 
 export class ReservationController {
@@ -41,7 +40,7 @@ export class ReservationController {
             res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
             next();
         });
-        this.controllerRouterObject.post("/book", async (req: Request, res: Response, next: any) => {
+        this.controllerRouterObject.post("/book", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: any) => {
             if (req.body.functionName.toString() !== "readOne") {
                 res.send("Must call book method");
             } else {
@@ -93,7 +92,7 @@ export class ReservationController {
             }
 
         });
-        this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
+        this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: any) => {
             if (req.body.functionName.toString() !== "readReservationsByCustomer") {
                 res.send("Must call read method ");
             } else {

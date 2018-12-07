@@ -6,9 +6,7 @@ import KafkaManager from "../kafkaSoftware/kafkaservices/kafkaManager";
 import { TestProducer } from "../kafkaSoftware/producer";
 import Payload from "../payload";
 import { TestConsumer } from "../kafkaSoftware/consumer";
-
-
-
+import * as passport from "passport";
 
 export class FlightController {
 
@@ -34,49 +32,52 @@ export class FlightController {
             res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,Authorization");
             next();
         });
-        this.controllerRouterObject.post("/register", async (req: Request, res: Response, next: any) => {
+        this.controllerRouterObject.post("/register", passport.authenticate("jwt", { session: false }),
+            async (req: Request, res: Response, next: any) => {
+
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.consumer);
+                const operationStatus = this.KafkaManager.getMessage();
+                res.send(operationStatus);
+
+            });
+        this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: any) => {
 
             const payload = req.body;
             const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
             await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
+
             res.send(operationStatus);
 
         });
-        this.controllerRouterObject.post("/read", async (req: Request, res: Response, next: any) => {
+        this.controllerRouterObject.post("/update", passport.authenticate("jwt", { session: false }),
+            async (req: Request, res: Response, next: any) => {
 
-            const payload = req.body;
-            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-            await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
-            await this.KafkaManager.startConsumer(this.consumer);
-            const operationStatus = this.KafkaManager.getMessage();
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.consumer);
+                const operationStatus = this.KafkaManager.getMessage();
+                //  console.log(operationStatus.messageStatus);
+                res.send(operationStatus.successStatus);
 
-            res.send(operationStatus);
+            });
+        this.controllerRouterObject.post("/delete", passport.authenticate("jwt", { session: false }),
+            async (req: Request, res: Response, next: any) => {
 
-        });
-        this.controllerRouterObject.post("/update", async (req: Request, res: Response, next: any) => {
+                const payload = req.body;
+                const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
+                await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
+                await this.KafkaManager.startConsumer(this.consumer);
+                const operationStatus = this.KafkaManager.getMessage();
+                console.log(operationStatus.successStatus);
+                res.send(operationStatus.successStatus);
 
-            const payload = req.body;
-            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-            await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
-            await this.KafkaManager.startConsumer(this.consumer);
-            const operationStatus = this.KafkaManager.getMessage();
-            //  console.log(operationStatus.messageStatus);
-            res.send(operationStatus.successStatus);
-
-        });
-        this.controllerRouterObject.post("/delete", async (req: Request, res: Response, next: any) => {
-
-            const payload = req.body;
-            const kafkaPayload = Payload.getPayload(payload.functionName, payload.args);
-            await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
-            await this.KafkaManager.startConsumer(this.consumer);
-            const operationStatus = this.KafkaManager.getMessage();
-            console.log(operationStatus.successStatus);
-            res.send(operationStatus.successStatus);
-
-        });
+            });
     }
     public getFlightControllerRouterObject() {
 

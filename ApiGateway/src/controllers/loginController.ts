@@ -51,7 +51,7 @@ export class LoginController {
                 };
                 res.status(400).json(failLoginDTO);
             }
-            const token = jwt.sign(payload, "process.env.SECRET");
+            const token = jwt.sign({ args: { username: authenticatedUser.data.username } }, "process.env.SECRET");
 
             const successResponse: LoginResponseDTO = {
                 status: "logged In",

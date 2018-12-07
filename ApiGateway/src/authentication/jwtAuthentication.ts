@@ -37,12 +37,11 @@ export const strategy = new jwtStrategy(opts, async (payload, next) => {
     console.log(payload);
 
     console.log("jwt protection finished ");
-    // TODO: pass err when user not found
     console.log("********************************************************************************************");
     if (user) {
         next(null, user);
 
     } else {
-        next("user not found ", null);
+        next(null, false);
     }
 });
