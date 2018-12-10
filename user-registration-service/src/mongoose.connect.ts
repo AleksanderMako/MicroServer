@@ -45,6 +45,7 @@ const kafkaManger = async () => {
     manager.setProducer(new TestProducer());
     manager.setConsumer(new TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
+    // make saga consumer
     let i = 0;
 
     // await manager.publishMessage("userCrud", payload);

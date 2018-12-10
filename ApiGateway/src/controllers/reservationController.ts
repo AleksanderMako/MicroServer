@@ -88,7 +88,7 @@ export class ReservationController {
                 await this.KafkaManager.startConsumer(this.flightCrudConsumer);
                 const seatUpdate = this.KafkaManager.getMessage();
                 console.log(seatUpdate.successStatus);
-                res.send(reservation.successStatus);
+                return res.send(reservation.successStatus);
             }
 
         });
@@ -102,7 +102,7 @@ export class ReservationController {
                 await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
                 const reservations = this.KafkaManager.getMessage();
 
-                res.send(reservations.successStatus);
+               return  res.send(reservations.successStatus);
             }
 
 
@@ -118,7 +118,7 @@ export class ReservationController {
                 await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
                 const reservations = this.KafkaManager.getMessage();
 
-                res.send((reservations.successStatus));
+              return  res.send((reservations.successStatus));
             }
 
 

@@ -42,6 +42,7 @@ const kafkaManger = () => __awaiter(this, void 0, void 0, function* () {
     manager.setProducer(new producer_1.TestProducer());
     manager.setConsumer(new consumer_1.TestConsumer());
     const consumer = manager.createConsumerObject("userCrud", "id-1", "g-11");
+    // make saga consumer
     let i = 0;
     // await manager.publishMessage("userCrud", payload);
     while (true) {

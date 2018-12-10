@@ -6,5 +6,6 @@ export default interface Irepository {
     delete(id: any): any;
     readByUsernames(data: any): any;
     seedAdmin(data: any): any;
+    securePassword(data: any): any;
 
 }

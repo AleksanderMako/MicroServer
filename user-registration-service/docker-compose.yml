@@ -4,8 +4,8 @@ services:
     container_name: "user-registration-service"
     build: .
     working_dir: /app
-    volumes: 
-      - .:/app
+   # volumes: 
+    #  - .:/app
     ports: 
       - 3000:3000
       - 9229:9229

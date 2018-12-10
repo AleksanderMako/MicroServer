@@ -8,7 +8,7 @@ import * as passportjwt from "passport-jwt";
 import * as jwt from "jsonwebtoken";
 import LoginResponseDTO from "../api-response-DTOS/login.responseDTO";
 import * as cors from "cors";
-
+import * as bcrypt from "bcrypt";
 export class LoginController {
     private KafkaManager: KafkaManager;
     private consumer: any;
@@ -40,7 +40,10 @@ export class LoginController {
 
             const authenticatedUser = JSON.parse(operationStatus.successStatus);
             console.log(authenticatedUser);
-            if (!operationStatus.successStatus) {
+            const result = bcrypt.compareSync(payload.args.password + authenticatedUser.data.salt, authenticatedUser.data.password);
+
+            console.log("pass authentication  " + result);
+            if (!result) {
                 const failLoginDTO: LoginResponseDTO = {
                     status: "Not logged  In",
                     token: "",
@@ -49,8 +52,9 @@ export class LoginController {
                     error: "user not found",
                     typeOfUser: null
                 };
-                res.status(400).json(failLoginDTO);
-            }
+                res.status(401);
+               return  res.send(failLoginDTO);
+            } else {
             const token = jwt.sign({ args: { username: authenticatedUser.data.username } }, "process.env.SECRET");
 
             const successResponse: LoginResponseDTO = {
@@ -61,8 +65,8 @@ export class LoginController {
                 error: null,
                 typeOfUser: authenticatedUser.data.typeOfUser
             };
-            res.json(successResponse);
-
+            return res.json(successResponse);
+        }
         });
 
     }

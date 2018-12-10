@@ -46,6 +46,9 @@ export const makeUserSchema = () => {
         },
         typeOfUser: {
             type: String
+        },
+        salt: {
+            type: String ,
         }
 
     });

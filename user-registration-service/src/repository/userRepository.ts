@@ -4,6 +4,7 @@ import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
 import { rejects } from "assert";
 import UserCrudDTO from "../userServiceDTOS/userCrudDTO";
+import * as bcrypt from "bcrypt";
 
 export default class UserRepository implements Irepository {
 
@@ -48,13 +49,15 @@ export default class UserRepository implements Irepository {
     }
 
     public create(data: any) {
+        const secured = this.securePassword(data.password);
         const user = new this.Model({
             username: data.username,
-            password: data.password,
+            password: secured.hash,
             firstname: data.firstname,
             lastName: data.lastName,
             age: data.age,
-            typeOfUser: "simple"
+            typeOfUser: "simple",
+            salt: secured.salt
         });
 
         // const error: Error = user.validateSync();
@@ -225,5 +228,17 @@ export default class UserRepository implements Irepository {
         });
     }
 
+    public securePassword(password: any) {
+        console.log("password to hash is :");
+        console.log(JSON.stringify(password));
 
+
+        const saltRounds = 2;
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hashedPassword = bcrypt.hashSync(password + salt, 2);
+        return {
+            salt: salt,
+            hash: hashedPassword
+        };
+    }
 }

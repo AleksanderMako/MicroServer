@@ -40,7 +40,7 @@ export class FlightController {
                 await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
-                res.send(operationStatus);
+               return res.send(operationStatus);
 
             });
         this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: any) => {
@@ -51,7 +51,7 @@ export class FlightController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
 
-            res.send(operationStatus);
+          return  res.send(operationStatus);
 
         });
         this.controllerRouterObject.post("/update", passport.authenticate("jwt", { session: false }),
@@ -63,7 +63,7 @@ export class FlightController {
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
                 //  console.log(operationStatus.messageStatus);
-                res.send(operationStatus.successStatus);
+              return  res.send(operationStatus.successStatus);
 
             });
         this.controllerRouterObject.post("/delete", passport.authenticate("jwt", { session: false }),
@@ -75,7 +75,7 @@ export class FlightController {
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
                 console.log(operationStatus.successStatus);
-                res.send(operationStatus.successStatus);
+                return res.send(operationStatus.successStatus);
 
             });
     }

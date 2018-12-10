@@ -46,7 +46,7 @@ export class UserController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
             console.log(operationStatus.successStatus);
-            res.send(operationStatus);
+           return  res.send(operationStatus);
         });
         this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }),
             async (req: Request, res: Response, next: any) => {
@@ -62,7 +62,7 @@ export class UserController {
                 console.log("read route finished ");
                 console.log("********************************************************************************************");
 
-                res.send(operationStatus.successStatus);
+                return res.send(operationStatus.successStatus);
 
             });
         this.controllerRouterObject.post("/update", passport.authenticate("jwt", { session: false }),
@@ -74,7 +74,7 @@ export class UserController {
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
                 console.log(operationStatus.successStatus);
-                res.send(operationStatus.successStatus);
+               return  res.send(operationStatus.successStatus);
 
             });
         this.controllerRouterObject.post("/delete", passport.authenticate("jwt", { session: false }),
@@ -94,7 +94,7 @@ export class UserController {
                 console.log("reservation response *****************************************************************************************************");
 
                 console.log(reservation.successStatus);
-                res.send(operationStatus.successStatus);
+               return  res.send(operationStatus.successStatus);
 
             });
     }
