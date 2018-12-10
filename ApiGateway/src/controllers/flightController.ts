@@ -13,6 +13,8 @@ export class FlightController {
     private controllerRouterObject: Router;
     private KafkaManager: KafkaManager;
     private consumer: any;
+    private reservationCrudConsumer: any;
+
     /**
      *
      */
@@ -22,6 +24,8 @@ export class FlightController {
         this.KafkaManager.setProducer(new TestProducer());
         this.KafkaManager.setConsumer(new TestConsumer());
         this.consumer = this.KafkaManager.createConsumerObject("flightCrudResponse", "apiFlightCrudConsumer-1", "apiFlightCrudConsumerGroup-1");
+        this.reservationCrudConsumer = this.KafkaManager.createConsumerObject("reservationResponse", "reservationCrudConsumer-5", "reservationCrudConsumerGroup-5");
+
     }
 
     public initControllerRoutes() {
@@ -40,7 +44,7 @@ export class FlightController {
                 await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
-               return res.send(operationStatus);
+                return res.send(operationStatus);
 
             });
         this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }), async (req: Request, res: Response, next: any) => {
@@ -51,7 +55,7 @@ export class FlightController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
 
-          return  res.send(operationStatus);
+            return res.send(operationStatus);
 
         });
         this.controllerRouterObject.post("/update", passport.authenticate("jwt", { session: false }),
@@ -62,8 +66,29 @@ export class FlightController {
                 await this.KafkaManager.publishMessage("flightCrud", kafkaPayload);
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
-                //  console.log(operationStatus.messageStatus);
-              return  res.send(operationStatus.successStatus);
+                const update = {
+                    Departure: payload.args.departure,
+                    Destination: payload.args.destination,
+                    airplaneType: payload.args.airplaneType,
+                    capacity: payload.args.capacity,
+                    Date: payload.args.date
+                };
+                const query = {
+                    flightNumber: payload.args.flightNumber,
+
+                };
+                const argument = {
+                    query: query,
+                    update: update
+                };
+                const kafkaReservationPayload = Payload.getPayload("update", argument);
+                await this.KafkaManager.publishMessage("reservations", kafkaReservationPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservation = this.KafkaManager.getMessage();
+                console.log("reservation response *****************************************************************************************************");
+
+                console.log(reservation.successStatus);
+                return res.send(operationStatus.successStatus);
 
             });
         this.controllerRouterObject.post("/delete", passport.authenticate("jwt", { session: false }),

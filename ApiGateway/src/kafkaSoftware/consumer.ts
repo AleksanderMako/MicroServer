@@ -29,8 +29,7 @@ export class TestConsumer {
     public  startConsumer(consumer: kafka.ConsumerGroup) {
         return new Promise((resolve, reject) => {
             consumer.on("message", (message) => {
-                console.log("Event triggered ");
-                console.log(message);
+
                // resolve(message);
                 resolve(message);
             });

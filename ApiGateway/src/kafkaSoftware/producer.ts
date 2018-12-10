@@ -26,7 +26,6 @@ export class TestProducer {
         this.buffMessage = JSON.stringify(message);
       ///  console.log(this.buffMessage);
         this.topic = topic;
-        let messageCounter = 0;
         try {
             // Sleep for 500 ms
             await this.sleep(500);
@@ -51,11 +50,6 @@ export class TestProducer {
 
                 }
             });
-
-
-
-            messageCounter++;
-
         } catch (e) {
             console.log(e);
             this.producer.close();

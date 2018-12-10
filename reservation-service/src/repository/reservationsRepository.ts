@@ -127,33 +127,60 @@ export default class ReservationsRepository implements Irepository {
 
     public update(data: any) {
         this.UpdateResrvationPayload = new UpdateReservationPayload(data.flightNumber, data.username);
+        console.log("Update many called with data to update : ");
+        console.log(JSON.stringify(data.update));
+
+        console.log("condition  : ");
+        console.log(JSON.stringify(data.query));
         return new Promise((resolve, reject) => {
 
-            this.Model.findOneAndUpdate(data.query, {
-                    $set: data.update
-
-                }, { runValidators: true, new: true }, (err, document) => {
-                    if (err) {
-                        const errResponse: ReserveCrudDTO = {
-                            opStatus: "error",
-                            hasError: true,
-                            error: err,
-                            data: undefined
-                        };
-                        reject(errResponse);
-                    } else {
-                        const successResponse: ReserveCrudDTO = {
-                            opStatus: "success",
-                            hasError: false,
-                            error: undefined,
-                            data: document
-                        };
-                        resolve(successResponse);
-                    }
-                });
+            this.Model.updateMany(data.query, { $set: data.update }, {multi: true}, (err, documents) => {
+                if (err) {
+                    const errResponse: ReserveCrudDTO = {
+                        opStatus: "error",
+                        hasError: true,
+                        error: err,
+                        data: undefined
+                    };
+                    reject(errResponse);
+                } else {
+                    const successResponse: ReserveCrudDTO = {
+                        opStatus: "success",
+                        hasError: false,
+                        error: undefined,
+                        data: documents
+                    };
+                    resolve(successResponse);
+                }
+            });
         });
-
     }
+    // this.Model.find(data.query, (err, document) => {
+    //     if (err) {
+    //         const errResponse: ReserveCrudDTO = {
+    //             opStatus: "error",
+    //             hasError: true,
+    //             error: err,
+    //             data: undefined
+    //         };
+    //         reject(errResponse);
+    //     } else {
+    //         for (let i = 0; i < document.length; i++) {
+
+    //             this.Model.update()
+    //         }
+    //         const successResponse: ReserveCrudDTO = {
+    //             opStatus: "success",
+    //             hasError: false,
+    //             error: undefined,
+    //             data: document
+    //         };
+    //         resolve(successResponse);
+    //     }
+    // });
+    //     })
+
+    // }
     public removeReservationBYCustomer(data: any) {
 
         return new Promise((resolve, reject) => {
