@@ -2,7 +2,6 @@ import * as userSchema from "../schemas/userSchema";
 import * as util from "util";
 import * as mongoose from "mongoose";
 import Irepository from "./Irepository";
-import { rejects } from "assert";
 import UserCrudDTO from "../userServiceDTOS/userCrudDTO";
 import * as bcrypt from "bcrypt";
 
@@ -22,13 +21,15 @@ export default class UserRepository implements Irepository {
     }
 
     public seedAdmin(admin: any) {
+        const secured = this.securePassword(admin.password)
         const user = new this.Model({
             username: admin.username,
-            password: admin.password,
+            password: secured.hash,
             firstname: admin.firstname,
             lastName: admin.lastName,
             age: admin.age,
-            typeOfUser: admin.typeOfUser
+            typeOfUser: admin.typeOfUser,
+            salt: secured.salt
         });
 
         // const error: Error = user.validateSync();

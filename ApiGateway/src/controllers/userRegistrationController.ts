@@ -46,7 +46,7 @@ export class UserController {
             await this.KafkaManager.startConsumer(this.consumer);
             const operationStatus = this.KafkaManager.getMessage();
             console.log(operationStatus.successStatus);
-           return  res.send(operationStatus);
+            return res.send(operationStatus);
         });
         this.controllerRouterObject.post("/read", passport.authenticate("jwt", { session: false }),
             async (req: Request, res: Response, next: any) => {
@@ -74,7 +74,26 @@ export class UserController {
                 await this.KafkaManager.startConsumer(this.consumer);
                 const operationStatus = this.KafkaManager.getMessage();
                 console.log(operationStatus.successStatus);
-               return  res.send(operationStatus.successStatus);
+                const update = {
+                    firstname: payload.args.firstname,
+                    lastName: payload.args.lastName
+                };
+                const query = {
+                    username: payload.args.username,
+
+                };
+                const argument = {
+                    query: query,
+                    update: update
+                };
+                const kafkaReservationPayload = Payload.getPayload("update", argument);
+                await this.KafkaManager.publishMessage("reservations", kafkaReservationPayload);
+                await this.KafkaManager.startConsumer(this.reservationCrudConsumer);
+                const reservation = this.KafkaManager.getMessage();
+                console.log("reservation response *****************************************************************************************************");
+
+                console.log(reservation.successStatus);
+                return res.send(operationStatus.successStatus);
 
             });
         this.controllerRouterObject.post("/delete", passport.authenticate("jwt", { session: false }),
@@ -94,7 +113,7 @@ export class UserController {
                 console.log("reservation response *****************************************************************************************************");
 
                 console.log(reservation.successStatus);
-               return  res.send(operationStatus.successStatus);
+                return res.send(operationStatus.successStatus);
 
             });
     }

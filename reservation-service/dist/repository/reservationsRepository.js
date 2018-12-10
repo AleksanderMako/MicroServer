@@ -103,13 +103,8 @@ class ReservationsRepository {
     update(data) {
         this.UpdateResrvationPayload = new updateReservationPayload_1.default(data.flightNumber, data.username);
         return new Promise((resolve, reject) => {
-            this.Model.findOneAndUpdate({
-                username: this.UpdateResrvationPayload.username,
-                flightNumber: this.UpdateResrvationPayload.flightnumber
-            }, {
-                $set: {
-                    seatNumber: data.seatNumber
-                }
+            this.Model.findOneAndUpdate(data.query, {
+                $set: data.update
             }, { runValidators: true, new: true }, (err, document) => {
                 if (err) {
                     const errResponse = {

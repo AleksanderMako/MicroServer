@@ -53,20 +53,20 @@ export class LoginController {
                     typeOfUser: null
                 };
                 res.status(401);
-               return  res.send(failLoginDTO);
+                return res.send(failLoginDTO);
             } else {
-            const token = jwt.sign({ args: { username: authenticatedUser.data.username } }, "process.env.SECRET");
+                const token = jwt.sign({ args: { username: authenticatedUser.data.username } }, "process.env.SECRET");
 
-            const successResponse: LoginResponseDTO = {
-                status: "logged In",
-                token: token,
-                username: authenticatedUser.data.username,
-                hasError: false,
-                error: null,
-                typeOfUser: authenticatedUser.data.typeOfUser
-            };
-            return res.json(successResponse);
-        }
+                const successResponse: LoginResponseDTO = {
+                    status: "logged In",
+                    token: token,
+                    username: authenticatedUser.data.username,
+                    hasError: false,
+                    error: null,
+                    typeOfUser: authenticatedUser.data.typeOfUser
+                };
+                return res.json(successResponse);
+            }
         });
 
     }
