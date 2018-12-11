@@ -40,6 +40,18 @@ export class LoginController {
 
             const authenticatedUser = JSON.parse(operationStatus.successStatus);
             console.log(authenticatedUser);
+            if (authenticatedUser.data === null ) {
+                const failLoginDTO: LoginResponseDTO = {
+                    status: "Not logged  In",
+                    token: "",
+                    username: "not truthy",
+                    hasError: true,
+                    error: "user not found",
+                    typeOfUser: null
+                };
+                return res.send(failLoginDTO);
+
+            }
             const result = bcrypt.compareSync(payload.args.password + authenticatedUser.data.salt, authenticatedUser.data.password);
 
             console.log("pass authentication  " + result);
